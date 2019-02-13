@@ -1,7 +1,8 @@
 # Operative system files
 .DS_Store
 
-# Output files
+# Input/Output files
+input/
 output/
 
 # Intermediate build files

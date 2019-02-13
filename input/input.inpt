@@ -1,7 +1,0 @@
-200			# dimensionality of the system
-2			# number of blocks for BSHAKE
-MatGen/A.inpt		# inputfile for Matrix A
-MatGen/b.inpt		# inputfile for vector b
-MatGen/x0.inpt		# inputfile for starting point
-1e-12			# tolerance of iterative methods
-50000			# maximum number of allowed iterations
