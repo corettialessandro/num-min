@@ -9,4 +9,4 @@ output/*
 source/obj/*
 
 # Executables
-NumMin
+num-min
