@@ -1,0 +1,11 @@
+# Operative system files
+.DS_Store
+
+# Output files
+./output/
+
+# Intermediate build files
+./source/obj/
+
+# Executables
+NumMin
