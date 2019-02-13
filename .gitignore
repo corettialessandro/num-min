@@ -2,11 +2,11 @@
 .DS_Store
 
 # Input/Output files
-input/
-output/
+input/*
+output/*
 
 # Intermediate build files
-source/obj/
+source/obj/*
 
 # Executables
 NumMin
