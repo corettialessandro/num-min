@@ -2,10 +2,10 @@
 .DS_Store
 
 # Output files
-./output/
+output/
 
 # Intermediate build files
-./source/obj/
+source/obj/
 
 # Executables
 NumMin
