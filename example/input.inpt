@@ -5,3 +5,5 @@ input/b.inpt		# inputfile for vector b
 input/x0.inpt		# inputfile for starting point
 1e-12			# tolerance of iterative methods
 50000			# maximum number of allowed iterations
+1			# additional constraint? (1 = yes, 0 = no)
+0.0			# value of the sum of the other variables

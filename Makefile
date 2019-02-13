@@ -6,13 +6,13 @@ LIBS 	= -lm -llapack
 ODIR	= source/obj
 SDIR	= source
 
-_DEPS 	= aux_func.h ConjGrad.h Matrix.h ML_SHAKE.h ML_BSHAKE.h output.h ReadIn.h Tensor.h Vector.h
+_DEPS 	= aux_func.h AdditConstr.h ConjGrad.h Matrix.h ML_SHAKE.h ML_BSHAKE.h output.h ReadIn.h Tensor.h Vector.h
 DEPS 	= $(patsubst %,$(IDIR)/%,$(_DEPS))
 
-_OBJ 	= aux_func.o ConjGrad.o main.o Matrix.o ML_SHAKE.o ML_BSHAKE.o output.o ReadIn.o Tensor.o Vector.o
+_OBJ 	= aux_func.o AdditConstr.o ConjGrad.o main.o Matrix.o ML_SHAKE.o ML_BSHAKE.o output.o ReadIn.o Tensor.o Vector.o
 OBJ 	= $(patsubst %,$(ODIR)/%,$(_OBJ))
 
-EXEC 	= NumMin
+EXEC 	= num-min
 
 $(ODIR)/%.o: $(SDIR)/%.c $(DEPS)
 	$(CC) $(CFLAGS) $(LIBS) -c -o $@ $<
