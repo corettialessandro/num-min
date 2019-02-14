@@ -15,7 +15,7 @@
 #include "ML_SHAKE.h"
 #include "ML_BSHAKE.h"
 
-void ReducedProblem(int N, double x_const, double ** A, double * b, double * x0, double * xF_AN, double * xF_CG, double * xF_SH, double * xF_BSH);
+void ReducedProblem(int N, double x_const, double ** A, double * b, double * x0, int verbose, int werbose, double * xF_AN, double * xF_CG, double * xF_SH, double * xF_BSH);
 
 double ** Reduce_A(int N, double ** A, double ** A_reduced);
 double * Reduce_b(int N, double * b, double * A_N, double x_const, double * b_reduced);

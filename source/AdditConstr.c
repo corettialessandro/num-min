@@ -8,7 +8,7 @@
 
 #include "AdditConstr.h"
 
-void ReducedProblem(int N, double x_const, double ** A, double * b, double * x0, double * xF_AN, double * xF_CG, double * xF_SH, double * xF_BSH) {
+void ReducedProblem(int N, double x_const, double ** A, double * b, double * x0, int verbose, int werbose, double * xF_AN, double * xF_CG, double * xF_SH, double * xF_BSH) {
 
    double * red_b, * red_x0, * red_xF_AN, * red_xF_CG, * red_xF_SH, * red_xF_BSH;
    double ** red_A, ** red_Ainv;
@@ -26,9 +26,13 @@ void ReducedProblem(int N, double x_const, double ** A, double * b, double * x0,
    red_b = Reduce_b(N, b, A[N-1], x_const, red_b);
    red_x0 = Reduce_x0(N, x0, red_x0);
 
-   PrintMatrix(N-1, N-1, red_A, "A Reduced");
-   PrintVector(N-1, red_b, "b Reduced");
-   PrintVector(N-1, x0, "x0 Reduced");
+   if (verbose) PrintMatrix(N-1, N-1, red_A, "A Reduced");
+   if (verbose) PrintVector(N-1, red_b, "b Reduced");
+   if (verbose) PrintVector(N-1, x0, "x0 Reduced");
+
+   if (werbose) WriteMatrix("red_A.out", "output/", N-1, N-1, red_A, "A Reduced");
+   if (werbose) WriteVector("red_b.out", "output/", N-1, red_b, "b Reduced");
+   if (werbose) WriteVector("red_x0.out", "output/", N-1, x0, "x0 Reduced");
 
    FreeMatrix(N-1, N-1, red_A);
    FreeDVector(N-1, red_b);
