@@ -38,11 +38,22 @@ void ReducedProblem(int N, double x_const, double ** A, double * b, double * x0,
    xF_SH = MasslessShake(N-1, red_A, red_b, red_x0, tol, maxiter, xF_SH);
    // xF_BSH = MasslessBlockShake(N-1, nblocks, red_A, red_b, red_x0, tol, maxiter, xF_BSH);
 
+   CheckOtherConstraints(N-1, red_A, red_b, xF_CG, tol);
+   CheckOtherConstraints(N-1, red_A, red_b, xF_SH, tol);
+
    xF_CG[N-1] = LastComponent(N, xF_CG, x_const);
    xF_SH[N-1] = LastComponent(N, xF_SH, x_const);
 
+   if (verbose) PrintVector(N, xF_CG, "xF_CG");
+   if (verbose) PrintVector(N, xF_SH, "xF_SH");
+   if (werbose) WriteVector("xF_CG.out", "output/", N, xF_CG, "xF_CG");
+   if (werbose) WriteVector("xF_SH.out", "output/", N, xF_SH, "xF_SH");
+
    CheckAdditionalConstraint(N, xF_CG, x_const, tol);
    CheckAdditionalConstraint(N, xF_SH, x_const, tol);
+
+   CheckOtherConstraints(N, A, b, xF_CG, tol);
+   CheckOtherConstraints(N, A, b, xF_SH, tol);
 
    FreeMatrix(N-1, N-1, red_A);
    FreeDVector(N-1, red_b);
@@ -88,7 +99,7 @@ double * Reduce_b(int N, double * b, double * A_N, double x_const, double * b_re
 
    for (i = 0; i < N-1; i++) {
 
-      b_reduced[i] = 2*x_const*(A_N[i] - A_NN) + b[i] - b_N;
+      b_reduced[i] = -(2*x_const*(A_N[i] - A_NN) - b[i] + b_N);
    }
 
    return b_reduced;
@@ -102,6 +113,7 @@ double * Reduce_x0(int N, double * x0, double * x0_reduced){
 
       x0_reduced[i] = x0[i];
    }
+
    return x0_reduced;
 }
 
@@ -135,6 +147,39 @@ void CheckAdditionalConstraint(int N, double * x, double x_const, double tol) {
       printf("\nAdditConstr.c -> CheckAdditionalConstraint() Error: Additional constraint not satisfied!\n");
       exit(EXIT_FAILURE);
    }
+
+   return;
+}
+
+void CheckOtherConstraints(int N, double ** A, double * b, double * x, double tol) {
+
+   int k, i;
+   double discr = 0.;
+   double * sigma;
+
+   sigma = AllocateDVector(N);
+
+   for (k = 0; k < N; k++) {
+
+      sigma[k] = -b[k];
+
+      for (i = 0; i < N; i++) {
+
+         sigma[k] += A[k][i]*x[i];
+      }
+
+      printf("%lf\n", sigma[k]);
+   }
+
+   discr = Norm_inf(N, sigma);
+
+   if (discr > tol) {
+
+      printf("\nAdditConstr.c -> CheckOtherConstraints() Error: Other constraints not satisfied!\n");
+      exit(EXIT_FAILURE);
+   }
+
+   FreeDVector(N, sigma);
 
    return;
 }

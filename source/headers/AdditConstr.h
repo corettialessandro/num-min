@@ -13,6 +13,7 @@
 #include <stdlib.h>
 #include <math.h>
 
+#include "aux_func.h"
 #include "Matrix.h"
 #include "Vector.h"
 #include "ConjGrad.h"
@@ -25,5 +26,6 @@ double * Reduce_b(int N, double * b, double * A_N, double x_const, double * b_re
 double * Reduce_x0(int N, double * x0, double * x0_reduced);
 double LastComponent(int N, double * x_others, double x_const);
 void CheckAdditionalConstraint(int N, double * x, double x_const, double tol);
+void CheckOtherConstraints(int N, double ** A, double * b, double * x, double tol);
 
 #endif /* AdditConstr_h */
