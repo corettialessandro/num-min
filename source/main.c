@@ -83,7 +83,7 @@ int main(int argc, char * argv[]) {
 
     if (additional_constraint) {
 
-      ReducedProblem(N, x_const, A, b, x0, verbose, werbose, xF_AN, xF_CG, xF_SH, xF_BSH);
+      ReducedProblem(N, x_const, A, b, x0, verbose, werbose, tol, maxiter, xF_AN, xF_CG, xF_SH, xF_BSH);
 
    } else {
 

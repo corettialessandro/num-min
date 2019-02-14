@@ -8,7 +8,7 @@
 
 #include "AdditConstr.h"
 
-void ReducedProblem(int N, double x_const, double ** A, double * b, double * x0, int verbose, int werbose, double * xF_AN, double * xF_CG, double * xF_SH, double * xF_BSH) {
+void ReducedProblem(int N, double x_const, double ** A, double * b, double * x0, int verbose, int werbose, double tol, int maxiter, double * xF_AN, double * xF_CG, double * xF_SH, double * xF_BSH) {
 
    double * red_b, * red_x0, * red_xF_AN, * red_xF_CG, * red_xF_SH, * red_xF_BSH;
    double ** red_A, ** red_Ainv;
@@ -33,6 +33,16 @@ void ReducedProblem(int N, double x_const, double ** A, double * b, double * x0,
    if (werbose) WriteMatrix("red_A.out", "output/", N-1, N-1, red_A, "A Reduced");
    if (werbose) WriteVector("red_b.out", "output/", N-1, red_b, "b Reduced");
    if (werbose) WriteVector("red_x0.out", "output/", N-1, x0, "x0 Reduced");
+
+   xF_CG = ConjugateGradient(N-1, red_A, red_b, red_x0, tol, maxiter, xF_CG);
+   xF_SH = MasslessShake(N-1, red_A, red_b, red_x0, tol, maxiter, xF_SH);
+   // xF_BSH = MasslessBlockShake(N-1, nblocks, red_A, red_b, red_x0, tol, maxiter, xF_BSH);
+
+   xF_CG[N-1] = LastComponent(N, xF_CG, x_const);
+   xF_SH[N-1] = LastComponent(N, xF_SH, x_const);
+
+   CheckAdditionalConstraint(N, xF_CG, x_const, tol);
+   CheckAdditionalConstraint(N, xF_SH, x_const, tol);
 
    FreeMatrix(N-1, N-1, red_A);
    FreeDVector(N-1, red_b);
@@ -93,4 +103,38 @@ double * Reduce_x0(int N, double * x0, double * x0_reduced){
       x0_reduced[i] = x0[i];
    }
    return x0_reduced;
+}
+
+double LastComponent(int N, double * x_others, double x_const){
+
+   int i;
+   double xlast = 0;
+
+   for (i = 0; i < N-1; i++) {
+
+      xlast -= x_others[i];
+   }
+
+   xlast += x_const;
+
+   return xlast;
+}
+
+void CheckAdditionalConstraint(int N, double * x, double x_const, double tol) {
+
+   int i;
+   double sum_x = 0;
+
+   for (i = 0; i < N; i++) {
+
+      sum_x += x[i];
+   }
+
+   if (fabs(sum_x - x_const) > tol) {
+
+      printf("\nAdditConstr.c -> CheckAdditionalConstraint() Error: Additional constraint not satisfied!\n");
+      exit(EXIT_FAILURE);
+   }
+
+   return;
 }
