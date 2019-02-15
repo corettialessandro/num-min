@@ -23,5 +23,6 @@ double * RowbyColProd(int N, double ** M, double * v, double * result);
 double * VectorSum(int N, double * u, double * v, double * result);
 double * VectorDifference(int N, double * u, double * v, double * result);
 double MaxIterError(int N, double * an_sol, double * iter_sol);
+double SumComponents(int N, double * x);
 
 #endif /* aux_func_h */

@@ -10,17 +10,14 @@
 
 void ReducedProblem(int N, double x_const, double ** A, double * b, double * x0, int verbose, int werbose, double tol, int maxiter, double * xF_AN, double * xF_CG, double * xF_SH, double * xF_BSH) {
 
-   double * red_b, * red_x0, * red_xF_AN, * red_xF_CG, * red_xF_SH, * red_xF_BSH;
+   double red_maxerr_CG, red_maxerr_SH;
+   double * red_b, * red_x0;
    double ** red_A, ** red_Ainv;
 
    red_A = AllocateMatrix(N-1, N-1);
    red_b = AllocateDVector(N-1);
    red_x0 = AllocateDVector(N-1);
    red_Ainv = AllocateMatrix(N-1, N-1);
-   red_xF_AN = AllocateDVector(N-1);
-   red_xF_CG = AllocateDVector(N-1);
-   red_xF_SH = AllocateDVector(N-1);
-   red_xF_BSH = AllocateDVector(N-1);
 
    red_A = Reduce_A(N, A, red_A);
    red_b = Reduce_b(N, b, A[N-1], x_const, red_b);
@@ -34,18 +31,33 @@ void ReducedProblem(int N, double x_const, double ** A, double * b, double * x0,
    if (werbose) WriteVector("red_b.out", "output/", N-1, red_b, "b Reduced");
    if (werbose) WriteVector("red_x0.out", "output/", N-1, x0, "x0 Reduced");
 
+   red_Ainv = InvertMatrix(N-1, red_A, red_Ainv);
+   xF_AN = RowbyColProd(N-1, red_Ainv, red_b, xF_AN);
    xF_CG = ConjugateGradient(N-1, red_A, red_b, red_x0, tol, maxiter, xF_CG);
+   red_maxerr_CG = MaxIterError(N-1, xF_AN, xF_CG);
    xF_SH = MasslessShake(N-1, red_A, red_b, red_x0, tol, maxiter, xF_SH);
+   red_maxerr_SH = MaxIterError(N-1, xF_AN, xF_SH);
    // xF_BSH = MasslessBlockShake(N-1, nblocks, red_A, red_b, red_x0, tol, maxiter, xF_BSH);
 
+   CheckOtherConstraints(N-1, red_A, red_b, xF_AN, tol);
    CheckOtherConstraints(N-1, red_A, red_b, xF_CG, tol);
    CheckOtherConstraints(N-1, red_A, red_b, xF_SH, tol);
 
+   if (verbose) PrintVector(N-1, xF_AN, "xF_AN Reduced");
+   if (verbose) PrintVector(N-1, xF_CG, "xF_CG Reduced");
+   if (verbose) PrintVector(N-1, xF_SH, "xF_SH Reduced");
+   if (werbose) WriteVector("red_xF_AN.out", "output/", N-1, xF_AN, "xF_AN Reduced");
+   if (werbose) WriteVector("red_xF_CG.out", "output/", N-1, xF_CG, "xF_CG Reduced");
+   if (werbose) WriteVector("red_xF_SH.out", "output/", N-1, xF_SH, "xF_SH Reduced");
+
+   xF_AN[N-1] = LastComponent(N, xF_AN, x_const);
    xF_CG[N-1] = LastComponent(N, xF_CG, x_const);
    xF_SH[N-1] = LastComponent(N, xF_SH, x_const);
 
+   if (verbose) PrintVector(N, xF_AN, "xF_AN");
    if (verbose) PrintVector(N, xF_CG, "xF_CG");
    if (verbose) PrintVector(N, xF_SH, "xF_SH");
+   if (werbose) WriteVector("xF_AN.out", "output/", N, xF_AN, "xF_AN");
    if (werbose) WriteVector("xF_CG.out", "output/", N, xF_CG, "xF_CG");
    if (werbose) WriteVector("xF_SH.out", "output/", N, xF_SH, "xF_SH");
 
@@ -59,10 +71,6 @@ void ReducedProblem(int N, double x_const, double ** A, double * b, double * x0,
    FreeDVector(N-1, red_b);
    FreeDVector(N-1, red_x0);
    FreeMatrix(N-1, N-1, red_Ainv);
-   FreeDVector(N-1, red_xF_AN);
-   FreeDVector(N-1, red_xF_CG);
-   FreeDVector(N-1, red_xF_SH);
-   FreeDVector(N-1, red_xF_BSH);
 
    return;
 }
@@ -81,10 +89,12 @@ double ** Reduce_A(int N, double ** A, double ** A_reduced){
    }
 
    for (i = 0; i < N-1; i++) {
-      for (j = 0; j < N-1; j++) {
+      for (j = 0; j < i; j++) {
 
          A_reduced[i][j] = A_NN - 2*A_N[j] + A[i][j];
+         A_reduced[j][i] = A_NN - 2*A_N[j] + A[i][j];
       }
+      A_reduced[i][i] = A_NN - 2*A_N[i] + A[i][i];
    }
 
    FreeDVector(N-1, A_N);
@@ -99,7 +109,7 @@ double * Reduce_b(int N, double * b, double * A_N, double x_const, double * b_re
 
    for (i = 0; i < N-1; i++) {
 
-      b_reduced[i] = -(2*x_const*(A_N[i] - A_NN) - b[i] + b_N);
+      b_reduced[i] = 2.*x_const*(A_N[i] - A_NN) - b[i] + b_N;
    }
 
    return b_reduced;
@@ -168,7 +178,7 @@ void CheckOtherConstraints(int N, double ** A, double * b, double * x, double to
          sigma[k] += A[k][i]*x[i];
       }
 
-      printf("%lf\n", sigma[k]);
+      // printf("%lf\n", sigma[k]);
    }
 
    discr = Norm_inf(N, sigma);
@@ -176,6 +186,9 @@ void CheckOtherConstraints(int N, double ** A, double * b, double * x, double to
    if (discr > tol) {
 
       printf("\nAdditConstr.c -> CheckOtherConstraints() Error: Other constraints not satisfied!\n");
+      for (i = 0; i < N; i++) {
+         printf("sigma[%d] = %lf\n", i, sigma[i]);
+      }
       exit(EXIT_FAILURE);
    }
 

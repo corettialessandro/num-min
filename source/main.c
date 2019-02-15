@@ -39,8 +39,8 @@ int main(int argc, char * argv[]) {
     GetOptions(argc, argv, &verbose, &werbose);
     ReadInput(inputfile, &N, &nblocks, Afilename, bfilename, x0filename, &tol, &maxiter, &additional_constraint, &x_const);
 
-    PrintSetup(inputfile, &N, &nblocks, Afilename, bfilename, x0filename, &tol, &maxiter);
-    WriteSetup("logfile.out", "output/", &N, &nblocks, Afilename, bfilename, x0filename, &tol, &maxiter);
+    PrintSetup(inputfile, N, nblocks, Afilename, bfilename, x0filename, tol, maxiter, additional_constraint, x_const);
+    WriteSetup("logfile.out", "output/", N, nblocks, Afilename, bfilename, x0filename, tol, maxiter, additional_constraint, x_const);
 
     A = AllocateMatrix(N, N);
     b = AllocateDVector(N);
@@ -122,6 +122,8 @@ int main(int argc, char * argv[]) {
       if (werbose) WriteVector("xF_BSH.out", "output/", N, xF_BSH, "xF_BSH");
       printf("  Maximum error component on iterative solution (BSH):\n");
       printf("  MAX|xf_AN - xf_BSH| = %.4e\n\n", maxerr_BSH);
+
+      if (verbose) printf("  The sum of the components of the minimum point is %.12lf\n", SumComponents(N, xF_AN));
    }
 
     FreeMatrix(N, N, A);
