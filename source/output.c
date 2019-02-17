@@ -8,7 +8,7 @@
 
 #include "output.h"
 
-void PrintSetup(char * inputfile, int dimension, int nblocks, char * Afilename, char * bfilename, char * x0filename, double tol, int maxiter, int additional_constraint, double x_const) {
+void PrintSetup(char * inputfile, int dimension, int nblocks, char * Afilename, char * bfilename, char * x0filename, double tol, int maxiter, int constrained, double x_const) {
 
     printf("\nNumerical Minimization Test Program\n\n");
     printf("Input Parameters:\n");
@@ -19,8 +19,8 @@ void PrintSetup(char * inputfile, int dimension, int nblocks, char * Afilename, 
     printf("Initial point input file: '%s'\n", x0filename);
     printf("Tolerance: tol = %.4e\n", tol);
     printf("Maximum number of allowed iterations: maxiter = %d\n", maxiter);
-    printf("Additional constraint: ");
-    (additional_constraint) ? printf("True\nSum of other variables: x_const = %lf\n", x_const) : printf("False\n");
+    printf("Constrained problem: ");
+    (constrained) ? printf("True\nSum of other variables: x_const = %lf\n", x_const) : printf("False\n");
     printf("\n");
 
     return;
@@ -123,7 +123,7 @@ void PrintStats(char method, int nblocks, int iter, double exectime, double disc
     return;
 }
 
-void WriteSetup(char * outputfile, char * outputpath, int dimension, int nblocks, char * Afilename, char * bfilename, char * x0filename, double tol, int maxiter, int additional_constraint, double x_const) {
+void WriteSetup(char * outputfile, char * outputpath, int dimension, int nblocks, char * Afilename, char * bfilename, char * x0filename, double tol, int maxiter, int constrained, double x_const) {
 
     FILE * fp_setup;
 
@@ -145,7 +145,8 @@ void WriteSetup(char * outputfile, char * outputpath, int dimension, int nblocks
     fprintf(fp_setup, "Initial point input file: '%s'\n", x0filename);
     fprintf(fp_setup, "Tolerance: tol = %.4e\n", tol);
     fprintf(fp_setup, "Maximum number of allowed iterations: maxiter = %d\n", maxiter);
-    (additional_constraint) ? fprintf(fp_setup, "True\nSum of other variables: x_const = %lf\n", x_const) : fprintf(fp_setup, "False\n");
+    fprintf(fp_setup, "Constrained problem: ");
+    (constrained) ? fprintf(fp_setup, "True\nSum of other variables: x_const = %lf\n", x_const) : fprintf(fp_setup, "False\n");
     fprintf(fp_setup, "\n");
 
     fclose(fp_setup);

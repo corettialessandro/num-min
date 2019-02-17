@@ -1,14 +1,66 @@
 //
-//  Add_constr.c
+//  Minimization.c
 //  NumMin
 //
-//  Created by Alessandro Coretti on 13/02/19.
+//  Created by Alessandro Coretti on 02/17/19.
 //  Copyright © 2019 Alessandro Coretti. All rights reserved.
 //
 
-#include "AdditConstr.h"
+#include "Minimization.h"
 
-void ReducedProblem(int N, double x_const, double ** A, double * b, double * x0, int verbose, int werbose, double tol, int maxiter, double * xF_AN, double * xF_CG, double * xF_SH, double * xF_BSH) {
+void Unconstrained(int N, double ** A, double * b, double * x0, int verbose, int werbose, double tol, int maxiter, int nblocks, double * xF_AN, double * xF_CG, double * xF_SH, double * xF_BSH) {
+
+   double maxerr_CG, maxerr_SH, maxerr_BSH;
+   double ** Ainv;
+   clock_t an_tstart, an_tfinish;
+   double an_time;
+
+   Ainv = AllocateMatrix(N, N);
+
+   an_tstart = clock();
+   Ainv = InvertMatrix(N, A, Ainv);
+   xF_AN = RowbyColProd(N, Ainv, b, xF_AN);
+   an_tfinish = clock();
+   an_time = (double) (an_tfinish - an_tstart)/CLOCKS_PER_SEC;
+   PrintStats('A', 0, 0, an_time, 0, 0);
+   WriteStats("logfile.out", "output/", 'A', 0, 0, an_time, 0, 0);
+   if (verbose) PrintMatrix(N, N, Ainv, "A^{-1}");
+   if (verbose) PrintVector(N, xF_AN, "xF_AN");
+   if (werbose) WriteMatrix("Ainv.out", "output/", N, N, Ainv, "A^{-1}");
+   if (werbose) WriteVector("xF_AN.out", "output/", N, xF_AN, "xF_AN");
+
+   xF_CG = ConjugateGradient(N, A, b, x0, tol, maxiter, xF_CG);
+   maxerr_CG = MaxIterError(N, xF_AN, xF_CG);
+   WriteError("logfile.out", "output/", 'C', maxerr_CG);
+   if (verbose) PrintVector(N, xF_CG, "xF_CG");
+   if (werbose) WriteVector("xF_CG.out", "output/", N, xF_CG, "xF_CG");
+   printf("  Maximum error component on iterative solution (CG):\n");
+   printf("  MAX|xf_AN - xf_CG| = %.4e\n\n", maxerr_CG);
+
+   xF_SH = MasslessShake(N, A, b, x0, tol, maxiter, xF_SH);
+   maxerr_SH = MaxIterError(N, xF_AN, xF_SH);
+   WriteError("logfile.out", "output/", 'S', maxerr_SH);
+   if (verbose) PrintVector(N, xF_SH, "xF_SH");
+   if (werbose) WriteVector("xF_SH.out", "output/", N, xF_SH, "xF_SH");
+   printf("  Maximum error component on iterative solution (SH):\n ");
+   printf("  MAX|xf_AN - xf_SH| = %.4e\n\n", maxerr_SH);
+
+   xF_BSH = MasslessBlockShake(N, nblocks, A, b, x0, tol, maxiter, xF_BSH);
+   maxerr_BSH = MaxIterError(N, xF_AN, xF_BSH);
+   WriteError("logfile.out", "output/", 'B', maxerr_BSH);
+   if (verbose) PrintVector(N, xF_BSH, "xF_BSH");
+   if (werbose) WriteVector("xF_BSH.out", "output/", N, xF_BSH, "xF_BSH");
+   printf("  Maximum error component on iterative solution (BSH):\n");
+   printf("  MAX|xf_AN - xf_BSH| = %.4e\n\n", maxerr_BSH);
+
+   if (verbose) printf("  The sum of the components of the minimum point is %.12lf\n\n", SumComponents(N, xF_AN));
+
+   FreeMatrix(N, N, Ainv);
+
+   return;
+}
+
+void Reduced(int N, double x_const, double ** A, double * b, double * x0, int verbose, int werbose, double tol, int maxiter, int nblocks, double * xF_AN, double * xF_CG, double * xF_SH, double * xF_BSH) {
 
    double red_maxerr_CG, red_maxerr_SH;
    double * red_b, * red_x0;
@@ -75,124 +127,7 @@ void ReducedProblem(int N, double x_const, double ** A, double * b, double * x0,
    return;
 }
 
-double ** Reduce_A(int N, double ** A, double ** A_reduced){
-
-   int i, j;
-   double A_NN = A[N-1][N-1];
-   double * A_N;
-
-   A_N = AllocateDVector(N-1);
-
-   for (i = 0; i < N-1; i++) {
-
-      A_N[i] = A[N-1][i];
-   }
-
-   for (i = 0; i < N-1; i++) {
-      for (j = 0; j < i; j++) {
-
-         A_reduced[i][j] = A_NN - 2*A_N[j] + A[i][j];
-         A_reduced[j][i] = A_NN - 2*A_N[j] + A[i][j];
-      }
-      A_reduced[i][i] = A_NN - 2*A_N[i] + A[i][i];
-   }
-
-   FreeDVector(N-1, A_N);
-
-   return A_reduced;
-}
-
-double * Reduce_b(int N, double * b, double * A_N, double x_const, double * b_reduced){
-
-   int i;
-   double b_N = b[N-1], A_NN = A_N[N-1];
-
-   for (i = 0; i < N-1; i++) {
-
-      b_reduced[i] = 2.*x_const*(A_N[i] - A_NN) - b[i] + b_N;
-   }
-
-   return b_reduced;
-}
-
-double * Reduce_x0(int N, double * x0, double * x0_reduced){
-
-   int i;
-
-   for (i = 0; i < N-1; i++) {
-
-      x0_reduced[i] = x0[i];
-   }
-
-   return x0_reduced;
-}
-
-double LastComponent(int N, double * x_others, double x_const){
-
-   int i;
-   double xlast = 0;
-
-   for (i = 0; i < N-1; i++) {
-
-      xlast -= x_others[i];
-   }
-
-   xlast += x_const;
-
-   return xlast;
-}
-
-void CheckAdditionalConstraint(int N, double * x, double x_const, double tol) {
-
-   int i;
-   double sum_x = 0;
-
-   for (i = 0; i < N; i++) {
-
-      sum_x += x[i];
-   }
-
-   if (fabs(sum_x - x_const) > tol) {
-
-      printf("\nAdditConstr.c -> CheckAdditionalConstraint() Error: Additional constraint not satisfied!\n");
-      exit(EXIT_FAILURE);
-   }
-
-   return;
-}
-
-void CheckOtherConstraints(int N, double ** A, double * b, double * x, double tol) {
-
-   int k, i;
-   double discr = 0.;
-   double * sigma;
-
-   sigma = AllocateDVector(N);
-
-   for (k = 0; k < N; k++) {
-
-      sigma[k] = -b[k];
-
-      for (i = 0; i < N; i++) {
-
-         sigma[k] += A[k][i]*x[i];
-      }
-
-      // printf("%lf\n", sigma[k]);
-   }
-
-   discr = Norm_inf(N, sigma);
-
-   if (discr > tol) {
-
-      printf("\nAdditConstr.c -> CheckOtherConstraints() Error: Other constraints not satisfied!\n");
-      for (i = 0; i < N; i++) {
-         printf("sigma[%d] = %lf\n", i, sigma[i]);
-      }
-      exit(EXIT_FAILURE);
-   }
-
-   FreeDVector(N, sigma);
+void Constrained(/* arguments */) {
 
    return;
 }
