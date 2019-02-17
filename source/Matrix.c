@@ -191,9 +191,7 @@ int CheckDiagonallyDominance(int dimension, double ** matrix, double * diagonal,
 
             if (i!=j) R[i] += fabs(matrix[i][j]);
         }
-
-        printf("hello\n" );
-
+        
         diagonal[i] = fabs(matrix[i][i]);
 
         if (diagonal[i] >= R[i]) counter++;
