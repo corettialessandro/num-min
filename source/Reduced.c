@@ -114,11 +114,11 @@ void CheckOtherConstraints(int N, double ** A, double * b, double * x, double to
 
    discr = Norm_inf(N, sigma);
 
-   if (discr > tol) {
+   if (discr > 1.E1*tol) {
 
       printf("\nAdditConstr.c -> CheckOtherConstraints() Error: Other constraints not satisfied!\n");
       for (i = 0; i < N; i++) {
-         printf("[DEBUG] sigma[%d] = %lf\n", i, sigma[i]);
+         printf("[DEBUG] sigma[%d] = %.12e\n", i, sigma[i]);
       }
       exit(EXIT_FAILURE);
    }
