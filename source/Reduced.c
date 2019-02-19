@@ -12,22 +12,20 @@ double ** Reduce_A(int N, double ** A, double ** A_reduced){
 
    int i, j;
    double A_NN = A[N-1][N-1];
-   double * A_N;
+   double * A_N, * A_iN;
 
    A_N = AllocateDVector(N-1);
 
    for (i = 0; i < N-1; i++) {
 
-      A_N[i] = A[N-1][i];
+      A_N [i] = A[N-1][i];
    }
 
    for (i = 0; i < N-1; i++) {
-      for (j = 0; j < i; j++) {
+      for (j = 0; j < N-1; j++) {
 
-         A_reduced[i][j] = A_NN - 2*A_N[j] + A[i][j];
-         A_reduced[j][i] = A_NN - 2*A_N[j] + A[i][j];
+         A_reduced[i][j] = A_NN - A_N[j] - A_N[i] + A[i][j];
       }
-      A_reduced[i][i] = A_NN - 2*A_N[i] + A[i][i];
    }
 
    FreeDVector(N-1, A_N);
