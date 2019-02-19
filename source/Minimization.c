@@ -65,6 +65,8 @@ void Reduced(int N, double x_const, double ** A, double * b, double * x0, int ve
    double red_maxerr_CG, red_maxerr_SH;
    double * red_b, * red_x0;
    double ** red_A, ** red_Ainv;
+   clock_t red_an_tstart, red_an_tfinish;
+   double red_an_time;
 
    red_A = AllocateMatrix(N-1, N-1);
    red_b = AllocateDVector(N-1);
@@ -83,7 +85,12 @@ void Reduced(int N, double x_const, double ** A, double * b, double * x0, int ve
    if (werbose) WriteVector("red_b.out", "output/", N-1, red_b, "b Reduced");
    if (werbose) WriteVector("red_x0.out", "output/", N-1, x0, "x0 Reduced");
 
+   red_an_tstart = clock();
    red_Ainv = InvertMatrix(N-1, red_A, red_Ainv);
+   red_an_tfinish = clock();
+   red_an_time = (double) (red_an_tfinish - red_an_tstart)/CLOCKS_PER_SEC;
+   PrintStats('A', 0, 0, red_an_time, 0, 0);
+
    xF_AN = RowbyColProd(N-1, red_Ainv, red_b, xF_AN);
    xF_CG = ConjugateGradient(N-1, red_A, red_b, red_x0, tol, maxiter, xF_CG);
    red_maxerr_CG = MaxIterError(N-1, xF_AN, xF_CG);

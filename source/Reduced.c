@@ -41,7 +41,6 @@ double * Reduce_b(int N, double * b, double * A_N, double x_const, double * b_re
    for (i = 0; i < N-1; i++) {
 
       b_reduced[i] = x_const*(A_NN - A_N[i]) - b_N + b[i];
-      printf("[DEBUG] %lf\t%lf\t%lf%lf\t%lf\n", x_const, A_NN, A_N[i], b_N, b[i]);
    }
 
    return b_reduced;
@@ -85,7 +84,6 @@ void CheckAdditionalConstraint(int N, double * x, double x_const, double tol) {
    }
 
    if (fabs(sum_x - x_const) > tol) {
-
       printf("\nAdditConstr.c -> CheckAdditionalConstraint() Error: Additional constraint not satisfied!\n");
       printf("[DEBUG] sum = %.12e, x_const = %.12e\n", sum_x, x_const);
       exit(EXIT_FAILURE);
@@ -115,7 +113,6 @@ void CheckOtherConstraints(int N, double ** A, double * b, double * x, double to
    discr = Norm_inf(N, sigma);
 
    if (discr > 1.E1*tol) {
-
       printf("\nAdditConstr.c -> CheckOtherConstraints() Error: Other constraints not satisfied!\n");
       for (i = 0; i < N; i++) {
          printf("[DEBUG] sigma[%d] = %.12e\n", i, sigma[i]);
