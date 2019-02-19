@@ -12,7 +12,7 @@ double ** Reduce_A(int N, double ** A, double ** A_reduced){
 
    int i, j;
    double A_NN = A[N-1][N-1];
-   double * A_N, * A_iN;
+   double * A_N;
 
    A_N = AllocateDVector(N-1);
 
@@ -40,7 +40,8 @@ double * Reduce_b(int N, double * b, double * A_N, double x_const, double * b_re
 
    for (i = 0; i < N-1; i++) {
 
-      b_reduced[i] = 2.*x_const*(A_N[i] - A_NN) - b[i] + b_N;
+      b_reduced[i] = x_const*(A_NN - A_N[i]) - b_N + b[i];
+      printf("[DEBUG] %lf\t%lf\t%lf%lf\t%lf\n", x_const, A_NN, A_N[i], b_N, b[i]);
    }
 
    return b_reduced;
@@ -86,6 +87,7 @@ void CheckAdditionalConstraint(int N, double * x, double x_const, double tol) {
    if (fabs(sum_x - x_const) > tol) {
 
       printf("\nAdditConstr.c -> CheckAdditionalConstraint() Error: Additional constraint not satisfied!\n");
+      printf("[DEBUG] sum = %.12e, x_const = %.12e\n", sum_x, x_const);
       exit(EXIT_FAILURE);
    }
 
