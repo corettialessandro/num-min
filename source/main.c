@@ -11,6 +11,7 @@
 #include <time.h>
 
 #include "ReadIn.h"
+#include "setup.h"
 #include "output.h"
 #include "Matrix.h"
 #include "Vector.h"
@@ -38,21 +39,7 @@ int main(int argc, char * argv[]) {
     PrintSetup(inputfile, N, nblocks, Afilename, bfilename, x0filename, tol, maxiter, constrained, x_const);
     WriteSetup("logfile.out", "output/", N, nblocks, Afilename, bfilename, x0filename, tol, maxiter, constrained, x_const);
 
-    A = AllocateMatrix(N, N);
-    b = AllocateDVector(N);
-    x0 = AllocateDVector(N);
-    xF_AN = AllocateDVector(N);
-    xF_CG = AllocateDVector(N);
-    xF_SH = AllocateDVector(N);
-    xF_BSH = AllocateDVector(N);
-
-    A = ReadMatrix(N, N, A, Afilename);
-    b = ReadDVector(N, b, bfilename);
-    x0 = ReadDVector(N, x0, x0filename);
-
-    if (verbose) PrintMatrix(N, N, A, "A");
-    if (verbose) PrintVector(N, b, "b");
-    if (verbose) PrintVector(N, x0, "x0");
+    Initialize(N, &A, &b, &x0, Afilename, bfilename, x0filename, verbose, &xF_AN, &xF_CG, &xF_SH, &xF_BSH);
 
     Analyse(N, A, b, x0, verbose, werbose);
 
@@ -65,13 +52,7 @@ int main(int argc, char * argv[]) {
       Unconstrained(N, A, b, x0, verbose, werbose, tol, maxiter, nblocks, xF_AN, xF_CG, xF_SH, xF_BSH);
    }
 
-    FreeMatrix(N, N, A);
-    FreeDVector(N, b);
-    FreeDVector(N, x0);
-    FreeDVector(N, xF_AN);
-    FreeDVector(N, xF_CG);
-    FreeDVector(N, xF_SH);
-    FreeDVector(N, xF_BSH);
+    Finalize(N, &A, &b, &x0, &xF_AN, &xF_CG, &xF_SH, &xF_BSH);
 
     return 0;
 }
