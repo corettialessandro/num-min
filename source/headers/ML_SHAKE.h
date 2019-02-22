@@ -19,6 +19,7 @@
 #include "aux_func.h"
 #include "output.h"
 
-double * MasslessShake(int N, double ** A, double * b, double * x0, double tol, int maxiter, double * xold);
+double * MasslessShake(int N_constr, int N_var, double ** A, double * b, double * x0, double tol, int maxiter, double x_const, double * xold);
+double Sigma(int k, int N_var, double ** A, double * b, double * x, double x_const);
 
 #endif /* ML_SHAKE_h */

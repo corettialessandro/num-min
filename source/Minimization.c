@@ -37,7 +37,7 @@ void Unconstrained(int N, double ** A, double * b, double * x0, int verbose, int
    printf("  Maximum error component on iterative solution (CG):\n");
    printf("  MAX|xf_AN - xf_CG| = %.4e\n\n", maxerr_CG);
 
-   xF_SH = MasslessShake(N, A, b, x0, tol, maxiter, xF_SH);
+   xF_SH = MasslessShake(N, N, A, b, x0, tol, maxiter, -1, xF_SH);
    maxerr_SH = MaxIterError(N, xF_AN, xF_SH);
    WriteError("logfile.out", "output/", 'S', maxerr_SH);
    if (verbose) PrintVector(N, xF_SH, "xF_SH");
@@ -56,6 +56,13 @@ void Unconstrained(int N, double ** A, double * b, double * x0, int verbose, int
    if (verbose) printf("  The sum of the components of the minimum point is %.12lf\n\n", SumComponents(N, xF_AN));
 
    FreeMatrix(N, N, Ainv);
+
+   return;
+}
+
+void Constrained(/* arguments */) {
+
+   // xF_SH = MasslessShake(N+1, constr_A, constr_b, constr_x0, tol, maxiter, xF_SH);
 
    return;
 }
@@ -83,7 +90,7 @@ void Reduced(int N, double x_const, double ** A, double * b, double * x0, int ve
 
    if (werbose) WriteMatrix("red_A.out", "output/", N-1, N-1, red_A, "A Reduced");
    if (werbose) WriteVector("red_b.out", "output/", N-1, red_b, "b Reduced");
-   if (werbose) WriteVector("red_x0.out", "output/", N-1, x0, "x0 Reduced");
+   if (werbose) WriteVector("red_x0.out", "output/", N-1, red_x0, "x0 Reduced");
 
    red_an_tstart = clock();
    red_Ainv = InvertMatrix(N-1, red_A, red_Ainv);
@@ -94,7 +101,7 @@ void Reduced(int N, double x_const, double ** A, double * b, double * x0, int ve
    xF_AN = RowbyColProd(N-1, red_Ainv, red_b, xF_AN);
    xF_CG = ConjugateGradient(N-1, red_A, red_b, red_x0, tol, maxiter, xF_CG);
    red_maxerr_CG = MaxIterError(N-1, xF_AN, xF_CG);
-   xF_SH = MasslessShake(N-1, red_A, red_b, red_x0, tol, maxiter, xF_SH);
+   xF_SH = MasslessShake(N-1, N-1, red_A, red_b, red_x0, tol, maxiter, -1, xF_SH);
    red_maxerr_SH = MaxIterError(N-1, xF_AN, xF_SH);
    // xF_BSH = MasslessBlockShake(N-1, nblocks, red_A, red_b, red_x0, tol, maxiter, xF_BSH);
 
@@ -130,11 +137,6 @@ void Reduced(int N, double x_const, double ** A, double * b, double * x0, int ve
    FreeDVector(N-1, red_b);
    FreeDVector(N-1, red_x0);
    FreeMatrix(N-1, N-1, red_Ainv);
-
-   return;
-}
-
-void Constrained(/* arguments */) {
 
    return;
 }
