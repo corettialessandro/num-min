@@ -45,7 +45,8 @@ int main(int argc, char * argv[]) {
 
     if (constrained) {
 
-      Reduced(N, x_const, A, b, x0, verbose, werbose, tol, maxiter, nblocks, xF_AN, xF_CG, xF_SH, xF_BSH);
+      // Reduced(N, x_const, A, b, x0, verbose, werbose, tol, maxiter, nblocks, xF_AN, xF_CG, xF_SH, xF_BSH);
+      Constrained(N, A, b, x0, tol, maxiter, x_const, xF_SH);
 
    } else {
 

@@ -24,7 +24,7 @@
 #include "Reduced.h"
 
 void Unconstrained(int N, double ** A, double * b, double * x0, int verbose, int werbose, double tol, int maxiter, int nblocks, double * xF_AN, double * xF_CG, double * xF_SH, double * xF_BSH);
-void Constrained();
+void Constrained(int N, double ** A, double * b, double * x0, double tol, int maxiter, double x_const, double * xF_SH);
 void Reduced(int N, double x_const, double ** A, double * b, double * x0, int verbose, int werbose, double tol, int maxiter, int nblocks, double * xF_AN, double * xF_CG, double * xF_SH, double * xF_BSH);
 
 #endif /* Minimization_h */

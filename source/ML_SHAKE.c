@@ -44,7 +44,7 @@ double * MasslessShake(int N_constr, int N_var, double ** A, double * b, double 
 
                 for (i=0; i<N_var; i++) {
 
-                    xold[i] -= gamk*A[k][i];
+                    (k < N_var) ? (xold[i] -= gamk*A[k][i]) : (xold[i] -= gamk);
                 }
             }
         }
@@ -88,7 +88,7 @@ double Sigma(int k, int N_var, double ** A, double * b, double * x, double x_con
 
    } else {
 
-      sigma_k = 0.;
+      sigma_k = -x_const;
       for (i = 0; i < N_var; i++) sigma_k += x[i];
    }
 
