@@ -52,7 +52,7 @@ int main(int argc, char * argv[]) {
          Reduced(N, x_const, A, b, x0, verbose, werbose, tol, maxiter, nblocks, xF_AN, xF_CG, xF_SH, xF_BSH);
          break;
       case 'C':
-         Constrained(N, A, b, x0, verbose, werbose, tol, maxiter, x_const, xF_SH);
+         Constrained(N, A, b, x0, verbose, werbose, tol, maxiter, x_const, xF_AN, xF_SH);
          break;
       default:
          printf("Unrecognized execution mode: mode = %c.\nTerminating.\n\n", mode);

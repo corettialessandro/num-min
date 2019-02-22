@@ -20,7 +20,7 @@
 #include "output.h"
 
 double * MasslessShake(int N_constr, int N_var, double ** A, double * b, double * x0, double tol, int maxiter, double x_const, double * xold);
-double Sigma(int k, int N_var, double ** A, double * b, double * x, double x_const);
+double Sigma(int k, int N_var, double ** A, double * b, double * x, double x_const, double gamma_N);
 double Denom(int k, int N_var, double ** A);
 
 #endif /* ML_SHAKE_h */

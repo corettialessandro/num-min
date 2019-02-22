@@ -14,7 +14,7 @@ double * MasslessShake(int N_constr, int N_var, double ** A, double * b, double 
     double time;
 
     int iter, k, i;
-    double discr = 0, gamk;
+    double discr = 0, gamk, gamma_N = 0.;
     double * denom, * sigold;
 
     denom = AllocateDVector(N_constr);
@@ -25,7 +25,7 @@ double * MasslessShake(int N_constr, int N_var, double ** A, double * b, double 
     for (k=0; k<N_constr; k++) {
 
         denom[k] = Denom(k, N_var, A);
-        sigold[k] = Sigma(k, N_var, A, b, xold, x_const);
+        sigold[k] = Sigma(k, N_var, A, b, xold, x_const, gamma_N);
     }
 
     discr = Norm_inf(N_constr, sigold);
@@ -34,13 +34,15 @@ double * MasslessShake(int N_constr, int N_var, double ** A, double * b, double 
 
         for (k=0; k<N_constr; k++) {
 
-            sigold[k] = Sigma(k, N_var, A, b, xold, x_const);
+            sigold[k] = Sigma(k, N_var, A, b, xold, x_const, gamma_N);
 
             if (fabs(sigold[k]) > tol) {
 
                 if (discr < fabs(sigold[k])) discr = fabs(sigold[k]);
 
                 gamk = sigold[k]/denom[k];
+
+                if (k == N_var) gamma_N += gamk;
 
                 for (i=0; i<N_var; i++) {
 
@@ -75,7 +77,7 @@ double * MasslessShake(int N_constr, int N_var, double ** A, double * b, double 
     return xold;
 }
 
-double Sigma(int k, int N_var, double ** A, double * b, double * x, double x_const) {
+double Sigma(int k, int N_var, double ** A, double * b, double * x, double x_const, double gamma_N) {
 
    double sigma_k;
 
@@ -83,7 +85,7 @@ double Sigma(int k, int N_var, double ** A, double * b, double * x, double x_con
 
    if (k < N_var) {
 
-      sigma_k = -b[k];
+      sigma_k = -b[k] + gamma_N;
       for (i = 0; i < N_var; i++) sigma_k += A[k][i] * x[i];
 
    } else {

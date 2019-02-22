@@ -60,11 +60,42 @@ void Unconstrained(int N, double ** A, double * b, double * x0, int verbose, int
    return;
 }
 
-void Constrained(int N, double ** A, double * b, double * x0, int verbose, int werbose, double tol, int maxiter, double x_const, double * xF_SH) {
+void Constrained(int N, double ** A, double * b, double * x0, int verbose, int werbose, double tol, int maxiter, double x_const, double * xF_AN, double * xF_SH) {
+
+   double maxerr_SH;
+   double * constr_b;
+   double ** Ainv;
+   clock_t constr_an_tstart, constr_an_tfinish;
+   double constr_an_time;
+
+   Ainv = AllocateMatrix(N, N);
+   constr_b = AllocateDVector(N);
+
+   constr_an_tstart = clock();
+   Ainv = InvertMatrix(N, A, Ainv);
+   constr_b = Constrain_b(N, Ainv, b, x_const, constr_b);
+   xF_AN = RowbyColProd(N, Ainv, constr_b, xF_AN);
+   constr_an_tfinish = clock();
+   constr_an_time = (double) (constr_an_tfinish - constr_an_tstart)/CLOCKS_PER_SEC;
+   PrintStats('A', 0, 0, constr_an_time, 0, 0);
+   WriteStats("logfile.out", "output/", 'A', 0, 0, constr_an_time, 0, 0);
+   if (verbose) PrintMatrix(N, N, Ainv, "A^{-1}");
+   if (verbose) PrintVector(N, constr_b, "b Constrained");
+   if (verbose) PrintVector(N, xF_AN, "xF_AN");
+   if (werbose) WriteMatrix("Ainv.out", "output/", N, N, Ainv, "A^{-1}");
+   if (werbose) WriteVector("constr_b.out", "output/", N, constr_b, "b Constrained");
+   if (werbose) WriteVector("xF_AN.out", "output/", N, xF_AN, "xF_AN");
 
    xF_SH = MasslessShake(N+1, N, A, b, x0, tol, maxiter, x_const, xF_SH);
-
+   maxerr_SH = MaxIterError(N, xF_AN, xF_SH);
+   WriteError("logfile.out", "output/", 'S', maxerr_SH);
    if (verbose) PrintVector(N, xF_SH, "xF_SH");
+   if (werbose) WriteVector("xF_SH.out", "output/", N, xF_SH, "xF_SH");
+   printf("  Maximum error component on iterative solution (SH):\n ");
+   printf("  MAX|xf_AN - xf_SH| = %.4e\n\n", maxerr_SH);
+
+   FreeMatrix(N, N, Ainv);
+   FreeDVector(N, constr_b);
 
    return;
 }
@@ -72,6 +103,7 @@ void Constrained(int N, double ** A, double * b, double * x0, int verbose, int w
 void Reduced(int N, double x_const, double ** A, double * b, double * x0, int verbose, int werbose, double tol, int maxiter, int nblocks, double * xF_AN, double * xF_CG, double * xF_SH, double * xF_BSH) {
 
    double red_maxerr_CG, red_maxerr_SH;
+   double maxerr_CG, maxerr_SH;
    double * red_b, * red_x0;
    double ** red_A, ** red_Ainv;
    clock_t red_an_tstart, red_an_tfinish;
@@ -119,8 +151,16 @@ void Reduced(int N, double x_const, double ** A, double * b, double * x0, int ve
    if (werbose) WriteVector("red_xF_SH.out", "output/", N-1, xF_SH, "xF_SH Reduced");
 
    xF_AN[N-1] = LastComponent(N, xF_AN, x_const);
+
    xF_CG[N-1] = LastComponent(N, xF_CG, x_const);
+   maxerr_CG = MaxIterError(N, xF_AN, xF_CG);
+   printf("  Maximum error component on iterative solution (CG):\n");
+   printf("  MAX|xf_AN - xf_CG| = %.4e\n\n", maxerr_CG);
+
    xF_SH[N-1] = LastComponent(N, xF_SH, x_const);
+   maxerr_SH = MaxIterError(N, xF_AN, xF_SH);
+   printf("  Maximum error component on iterative solution (SH):\n ");
+   printf("  MAX|xf_AN - xf_SH| = %.4e\n\n", maxerr_SH);
 
    if (verbose) PrintVector(N, xF_AN, "xF_AN");
    if (verbose) PrintVector(N, xF_CG, "xF_CG");
