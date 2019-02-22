@@ -28,29 +28,35 @@ int main(int argc, char * argv[]) {
     double tol;
     double * b, * x0, * xF_AN, * xF_CG, * xF_SH, * xF_BSH;
     double ** A;
-    int constrained;
+    char mode;
     double x_const;
     char inputfile[_MAXSTRLENGTH] = "input/input.inpt";
     char Afilename[_MAXSTRLENGTH], bfilename[_MAXSTRLENGTH], x0filename[_MAXSTRLENGTH];
 
     GetOptions(argc, argv, &verbose, &werbose);
-    ReadInput(inputfile, &N, &nblocks, Afilename, bfilename, x0filename, &tol, &maxiter, &constrained, &x_const);
+    ReadInput(inputfile, &N, &nblocks, Afilename, bfilename, x0filename, &tol, &maxiter, &mode, &x_const);
 
-    PrintSetup(inputfile, N, nblocks, Afilename, bfilename, x0filename, tol, maxiter, constrained, x_const);
-    WriteSetup("logfile.out", "output/", N, nblocks, Afilename, bfilename, x0filename, tol, maxiter, constrained, x_const);
+    PrintSetup(inputfile, N, nblocks, Afilename, bfilename, x0filename, tol, maxiter, mode, x_const);
+    WriteSetup("logfile.out", "output/", N, nblocks, Afilename, bfilename, x0filename, tol, maxiter, mode, x_const);
 
     Initialize(N, &A, &b, &x0, Afilename, bfilename, x0filename, verbose, &xF_AN, &xF_CG, &xF_SH, &xF_BSH);
 
     Analyse(N, A, b, x0, verbose, werbose);
 
-    if (constrained) {
+   switch (mode) {
 
-      // Reduced(N, x_const, A, b, x0, verbose, werbose, tol, maxiter, nblocks, xF_AN, xF_CG, xF_SH, xF_BSH);
-      Constrained(N, A, b, x0, tol, maxiter, x_const, xF_SH);
-
-   } else {
-
-      Unconstrained(N, A, b, x0, verbose, werbose, tol, maxiter, nblocks, xF_AN, xF_CG, xF_SH, xF_BSH);
+      case 'U':
+         Unconstrained(N, A, b, x0, verbose, werbose, tol, maxiter, nblocks, xF_AN, xF_CG, xF_SH, xF_BSH);
+         break;
+      case 'R':
+         Reduced(N, x_const, A, b, x0, verbose, werbose, tol, maxiter, nblocks, xF_AN, xF_CG, xF_SH, xF_BSH);
+         break;
+      case 'C':
+         Constrained(N, A, b, x0, tol, maxiter, x_const, xF_SH);
+         break;
+      default:
+         printf("Unrecognized mode: mode = %c.\nTerminating.\n\n", mode);
+         exit(EXIT_FAILURE);
    }
 
     Finalize(N, &A, &b, &x0, &xF_AN, &xF_CG, &xF_SH, &xF_BSH);

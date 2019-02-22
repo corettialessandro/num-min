@@ -8,22 +8,26 @@
 
 #include "output.h"
 
-void PrintSetup(char * inputfile, int dimension, int nblocks, char * Afilename, char * bfilename, char * x0filename, double tol, int maxiter, int constrained, double x_const) {
+void PrintSetup(char * inputfile, int dimension, int nblocks, char * Afilename, char * bfilename, char * x0filename, double tol, int maxiter, char mode, double x_const) {
 
-    printf("\nNumerical Minimization Test Program\n\n");
-    printf("Input Parameters:\n");
-    printf("Dimension: N = %d\n", dimension);
-    printf("Number of blocks for BSHAKE: nblocks = %d\n", nblocks);
-    printf("A Matrix input file: '%s'\n", Afilename);
-    printf("B vector input file: '%s'\n", bfilename);
-    printf("Initial point input file: '%s'\n", x0filename);
-    printf("Tolerance: tol = %.4e\n", tol);
-    printf("Maximum number of allowed iterations: maxiter = %d\n", maxiter);
-    printf("Constrained problem: ");
-    (constrained) ? printf("True\nSum of other variables: x_const = %lf\n", x_const) : printf("False\n");
-    printf("\n");
+   printf("\nNumerical Minimization Test Program\n\n");
+   printf("Input Parameters:\n");
+   printf("Dimension: N = %d\n", dimension);
+   printf("Number of blocks for BSHAKE: nblocks = %d\n", nblocks);
+   printf("A Matrix input file: '%s'\n", Afilename);
+   printf("B vector input file: '%s'\n", bfilename);
+   printf("Initial point input file: '%s'\n", x0filename);
+   printf("Tolerance: tol = %.4e\n", tol);
+   printf("Maximum number of allowed iterations: maxiter = %d\n", maxiter);
+   printf("Constrained problem: ");
+   if (mode != 'U') {
+      printf("True\nSum of other variables: x_const = %lf\n", x_const);
+      if (mode == 'R') printf("Reduced minimization.\n");
+      else if (mode == 'C') printf("Constrained minimization.\n");
+   } else printf("False\n");
+   printf("\n");
 
-    return;
+   return;
 }
 
 void PrintMatrix(int rows, int columns, double ** matrix, char * label) {
@@ -123,7 +127,7 @@ void PrintStats(char method, int nblocks, int iter, double exectime, double disc
     return;
 }
 
-void WriteSetup(char * outputfile, char * outputpath, int dimension, int nblocks, char * Afilename, char * bfilename, char * x0filename, double tol, int maxiter, int constrained, double x_const) {
+void WriteSetup(char * outputfile, char * outputpath, int dimension, int nblocks, char * Afilename, char * bfilename, char * x0filename, double tol, int maxiter, char mode, double x_const) {
 
     FILE * fp_setup;
 
@@ -134,24 +138,28 @@ void WriteSetup(char * outputfile, char * outputpath, int dimension, int nblocks
     if ((fp_setup = fopen(output, "w+")) == NULL){
         printf("\noutput.c -> WriteSetup() Error: File '%s' not found!\n", output);
         exit(EXIT_FAILURE);
-    }
+   }
 
-    fprintf(fp_setup, "\nNumerical Minimization Test Program\n\n");
-    fprintf(fp_setup, "Input Parameters:\n");
-    fprintf(fp_setup, "Dimension: N = %d\n", dimension);
-    fprintf(fp_setup, "Number of blocks for BSHAKE: nblocks = %d\n", nblocks);
-    fprintf(fp_setup, "A Matrix input file: '%s'\n", Afilename);
-    fprintf(fp_setup, "B vector input file: '%s'\n", bfilename);
-    fprintf(fp_setup, "Initial point input file: '%s'\n", x0filename);
-    fprintf(fp_setup, "Tolerance: tol = %.4e\n", tol);
-    fprintf(fp_setup, "Maximum number of allowed iterations: maxiter = %d\n", maxiter);
-    fprintf(fp_setup, "Constrained problem: ");
-    (constrained) ? fprintf(fp_setup, "True\nSum of other variables: x_const = %lf\n", x_const) : fprintf(fp_setup, "False\n");
-    fprintf(fp_setup, "\n");
+   fprintf(fp_setup, "\nNumerical Minimization Test Program\n\n");
+   fprintf(fp_setup, "Input Parameters:\n");
+   fprintf(fp_setup, "Dimension: N = %d\n", dimension);
+   fprintf(fp_setup, "Number of blocks for BSHAKE: nblocks = %d\n", nblocks);
+   fprintf(fp_setup, "A Matrix input file: '%s'\n", Afilename);
+   fprintf(fp_setup, "B vector input file: '%s'\n", bfilename);
+   fprintf(fp_setup, "Initial point input file: '%s'\n", x0filename);
+   fprintf(fp_setup, "Tolerance: tol = %.4e\n", tol);
+   fprintf(fp_setup, "Maximum number of allowed iterations: maxiter = %d\n", maxiter);
+   fprintf(fp_setup, "Constrained problem: ");
+   if (mode != 'U') {
+      fprintf(fp_setup, "True\nSum of other variables: x_const = %lf\n", x_const);
+      if (mode == 'R') fprintf(fp_setup, "Reduced minimization.\n");
+      else if (mode == 'C') fprintf(fp_setup, "Constrained minimization.\n");
+   } else fprintf(fp_setup, "False\n");
+   fprintf(fp_setup, "\n");
 
-    fclose(fp_setup);
+   fclose(fp_setup);
 
-    return;
+   return;
 }
 
 void WriteMatrix(char * outputfile, char * outputpath, int rows, int columns, double ** matrix, char * label) {

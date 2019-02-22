@@ -15,6 +15,6 @@
 #include <ctype.h>
 
 void GetOptions(int argc, char * argv[], int * verbose, int * werbose);
-void ReadInput(char * inputfile, int * dimension, int * nblocks, char * Afilename, char * bfilename, char * x0filename, double * tol, int * maxiter, int * constrained, double * x_const);
+void ReadInput(char * inputfile, int * dimension, int * nblocks, char * Afilename, char * bfilename, char * x0filename, double * tol, int * maxiter, char * mode, double * x_const);
 
 #endif /* ReadIn_h */
