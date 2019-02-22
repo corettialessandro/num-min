@@ -83,24 +83,35 @@ double Sigma(int k, int N_var, double ** A, double * b, double * x, double x_con
 
    int i;
 
-   if (k > N_var) {
+   if (k < N_var) {
 
-      sigma_k = 0.;
-
-      for (i = 0; i < N_var; i++) {
-
-         sigma_k += x[i];
-      }
+      sigma_k = -b[k];
+      for (i = 0; i < N_var; i++) sigma_k += A[k][i] * x[i];
 
    } else {
 
-      sigma_k = -b[k];
-
-      for (i = 0; i < N_var; i++) {
-
-         sigma_k += A[k][i] * x[i];
-      }
+      sigma_k = 0.;
+      for (i = 0; i < N_var; i++) sigma_k += x[i];
    }
 
    return sigma_k;
+}
+
+double Denom(int k, int N_var, double ** A) {
+
+   double denom_k;
+
+   int i;
+
+   if (k < N_var) {
+
+      denom_k = 0.;
+      for (i = 0; i < N_var; i++) denom_k += A[k][i]*A[k][i];
+
+   } else {
+
+      denom_k = N_var;
+   }
+
+   return denom_k;
 }

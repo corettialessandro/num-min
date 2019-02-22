@@ -62,7 +62,7 @@ void Unconstrained(int N, double ** A, double * b, double * x0, int verbose, int
 
 void Constrained(/* arguments */) {
 
-   // xF_SH = MasslessShake(N+1, constr_A, constr_b, constr_x0, tol, maxiter, xF_SH);
+   // xF_SH = MasslessShake(N+1, N, A, b, x0, tol, maxiter, x_const, xF_SH);
 
    return;
 }
