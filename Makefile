@@ -15,7 +15,7 @@ OBJ 	= $(patsubst %,$(ODIR)/%,$(_OBJ))
 EXEC 	= num-min
 
 $(ODIR)/%.o: $(SDIR)/%.c $(DEPS)
-	$(CC) $(CFLAGS) $(LIBS) -c -o $@ $<
+	$(CC) $(CFLAGS) -c -o $@ $<
 
 $(EXEC): $(OBJ)
 	gcc $(CFLAGS) $(LIBS) -o $@ $^
