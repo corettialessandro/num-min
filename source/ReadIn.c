@@ -52,8 +52,8 @@ void ReadInput(char * inputfile, int * dimension, int * nblocks, char * Afilenam
     fscanf(fp_input, "%s %*[^\n]", bfilename);
     fscanf(fp_input, "%s %*[^\n]", x0filename);
     fscanf(fp_input, "%lf %*[^\n]", tol);
-    fscanf(fp_input, "%d %*[^\n]\n", maxiter);
-    fscanf(fp_input, "%c %*[^\n]\n", mode);
+    fscanf(fp_input, "%d %*[^\n]", maxiter);
+    fscanf(fp_input, " %c %*[^\n]", mode);
     if (*mode != 'U') fscanf(fp_input, "%lf %*[^\n]", x_const);
 
     fclose(fp_input);

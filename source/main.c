@@ -55,7 +55,7 @@ int main(int argc, char * argv[]) {
          Constrained(N, A, b, x0, tol, maxiter, x_const, xF_SH);
          break;
       default:
-         printf("Unrecognized mode: mode = %c.\nTerminating.\n\n", mode);
+         printf("Unrecognized execution mode: mode = %c.\nTerminating.\n\n", mode);
          exit(EXIT_FAILURE);
    }
 
