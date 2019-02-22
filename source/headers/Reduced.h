@@ -20,6 +20,7 @@
 #include "ML_SHAKE.h"
 #include "ML_BSHAKE.h"
 
+void Reduced(int N, double x_const, double ** A, double * b, double * x0, int verbose, int werbose, double tol, int maxiter, int nblocks, double * xF_AN, double * xF_CG, double * xF_SH, double * xF_BSH);
 double ** Reduce_A(int N, double ** A, double ** A_reduced);
 double * Reduce_b(int N, double * b, double * A_N, double x_const, double * b_reduced);
 double * Reduce_x0(int N, double * x0, double * x0_reduced);

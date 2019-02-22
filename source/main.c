@@ -16,7 +16,9 @@
 #include "Matrix.h"
 #include "Vector.h"
 #include "Analysis.h"
-#include "Minimization.h"
+#include "Unconstrained.h"
+#include "Reduced.h"
+#include "Constrained.h"
 
 #define _MAXSTRLENGTH 50
 
