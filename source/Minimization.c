@@ -60,9 +60,11 @@ void Unconstrained(int N, double ** A, double * b, double * x0, int verbose, int
    return;
 }
 
-void Constrained(int N, double ** A, double * b, double * x0, double tol, int maxiter, double x_const, double * xF_SH) {
+void Constrained(int N, double ** A, double * b, double * x0, int verbose, int werbose, double tol, int maxiter, double x_const, double * xF_SH) {
 
    xF_SH = MasslessShake(N+1, N, A, b, x0, tol, maxiter, x_const, xF_SH);
+
+   if (verbose) PrintVector(N, xF_SH, "xF_SH");
 
    return;
 }
