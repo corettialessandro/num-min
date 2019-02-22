@@ -24,10 +24,8 @@ double * MasslessShake(int N_constr, int N_var, double ** A, double * b, double 
 
     for (k=0; k<N_constr; k++) {
 
-        denom[k] = 0.;
+        denom[k] = Denom(k, N_var, A);
         sigold[k] = Sigma(k, N_var, A, b, xold, x_const);
-
-        for (i=0; i<N_var; i++) denom[k] += A[k][i]*A[k][i];
     }
 
     discr = Norm_inf(N_constr, sigold);
