@@ -42,7 +42,7 @@ double * MasslessShake(int N_constr, int N_var, double ** A, double * b, double 
 
                 gamk = sigold[k]/denom[k];
 
-                if (k == N_var) gamma_N -= gamk;
+                if (k == N_var) gamma_Np1 = gamma_N -= gamk;
 
                 for (i=0; i<N_var; i++) {
 
