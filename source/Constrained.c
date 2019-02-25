@@ -34,7 +34,7 @@ void Constrained(int N, double ** A, double * b, double * x0, int verbose, int w
    if (werbose) WriteVector("constr_b.out", "output/", N, constr_b, "b Constrained");
    if (werbose) WriteVector("xF_AN.out", "output/", N, xF_AN, "xF_AN");
 
-   xF_SH = MasslessShake(N+1, N, A, b, x0, tol, maxiter, x_const, xF_SH);
+   xF_SH = MasslessShake(N+1, N, A, b, x0, tol, maxiter, x_const, 0, 0, xF_SH);
    maxerr_SH = MaxIterError(N, xF_AN, xF_SH);
    WriteError("logfile.out", "output/", 'S', maxerr_SH);
    if (verbose) PrintVector(N, xF_SH, "xF_SH");
@@ -65,6 +65,8 @@ double * Constrain_b(int N, double ** Ainv, double * b, double x_const, double *
 
       constr_b[i] = b[i] + (x_const-IdAinvb)/IdAinvId;
    }
+
+   printf("[DEBUG] gamma_N = %lf\n", (x_const-IdAinvb)/IdAinvId);
 
    return constr_b;
 }

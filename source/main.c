@@ -31,7 +31,7 @@ int main(int argc, char * argv[]) {
     double * b, * x0, * xF_AN, * xF_CG, * xF_SH, * xF_BSH;
     double ** A;
     char mode;
-    double x_const;
+    double x_const = 0;
     char inputfile[_MAXSTRLENGTH] = "input/input.inpt";
     char Afilename[_MAXSTRLENGTH], bfilename[_MAXSTRLENGTH], x0filename[_MAXSTRLENGTH];
 
