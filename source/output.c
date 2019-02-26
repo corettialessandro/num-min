@@ -15,6 +15,7 @@ void PrintSetup(char * inputfile, int dimension, int nconstraints, int nblocks, 
    printf("Dimension: N_var = %d\n", dimension);
    printf("Number of constraints: N_constr = %d\n", nconstraints);
    if (nconstraints - dimension == 1) printf("Additional constraint: x_const = %.4lf\n", constr[nconstraints-1]);
+   else if (nconstraints - dimension == 2) printf("Additional constraint: x_const = (%.4lf, %.4lf)\n", constr[nconstraints-2], constr[nconstraints-1]);
    printf("Number of blocks for BSHAKE: nblocks = %d\n", nblocks);
    printf("A Matrix input file: '%s'\n", Afilename);
    printf("B vector input file: '%s'\n", bfilename);
@@ -142,6 +143,7 @@ void WriteSetup(char * outputfile, char * outputpath, int dimension, int nconstr
    fprintf(fp_setup, "Dimension: N_var = %d\n", dimension);
    fprintf(fp_setup, "Number of constraints: N_constr = %d\n", nconstraints);
    if (nconstraints - dimension == 1) fprintf(fp_setup, "Additional constraint: x_const = %.4lf\n", constr[nconstraints-1]);
+   else if (nconstraints - dimension == 2) fprintf(fp_setup, "Additional constraint: x_const = (%.4lf, %.4lf)\n", constr[nconstraints-2], constr[nconstraints-1]);
    fprintf(fp_setup, "Number of blocks for BSHAKE: nblocks = %d\n", nblocks);
    fprintf(fp_setup, "A Matrix input file: '%s'\n", Afilename);
    fprintf(fp_setup, "B vector input file: '%s'\n", bfilename);

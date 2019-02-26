@@ -140,13 +140,13 @@ double MaxIterError(int N, double * an_sol, double * iter_sol) {
     return maxerr;
 }
 
-double SumComponents(int N, double * x) {
+double SumComponents(int init, int N, double * x) {
 
    double sum_components = 0.;
 
    int i;
 
-   for (i = 0; i < N; i++) {
+   for (i = init; i < N; i++) {
 
       sum_components += x[i];
    }
@@ -182,14 +182,20 @@ void CheckOtherConstraints(int N, double ** A, double * b, double * x, double * 
    return;
 }
 
-void CheckAdditionalConstraint(int N, double * x, double x_const) {
+void CheckAdditionalConstraints(int N_var, int N_constr, double * x, double * constr) {
 
    double sum_x = 0;
 
-   sum_x = SumComponents(N, x);
+   int delta_N = N_constr - N_var;
 
    printf("The sum of the components of the minimum point is:\n");
-   printf("sum_x = %lf vs. x_const = %lf\n", sum_x, x_const);
+   sum_x = SumComponents(0, N_var/delta_N, x);
+   printf("sum_x = %lf vs. x_const = %lf\n", sum_x, constr[N_var]);
+   if (delta_N == 2) {
+      sum_x = 0;
+      sum_x = SumComponents(N_var/delta_N, N_var, x);
+      printf("sum_x = %lf vs. x_const = %lf\n", sum_x, constr[N_var+1]);
+   }
    printf("\n");
 
    return;
@@ -198,7 +204,7 @@ void CheckAdditionalConstraint(int N, double * x, double x_const) {
 void CheckConstraints(int N_var, int N_constr, double ** A, double * b, double * x, double * constr) {
 
    CheckOtherConstraints(N_var, A, b, x, constr);
-   if (N_constr - N_var == 1) CheckAdditionalConstraint(N_var, x, constr[N_constr-1]);
+   if (N_constr > N_var) CheckAdditionalConstraints(N_var, N_constr, x, constr);
 
    return;
 }

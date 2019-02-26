@@ -24,9 +24,9 @@ double * VectorSum(int N, double * u, double * v, double * result);
 double * VectorDifference(int N, double * u, double * v, double * result);
 double * VectorScalarSum(int N, double * u, double l, double * result);
 double MaxIterError(int N, double * an_sol, double * iter_sol);
-double SumComponents(int N, double * x);
+double SumComponents(int init, int N, double * x);
 void CheckOtherConstraints(int N, double ** A, double * b, double * x, double * constr);
-void CheckAdditionalConstraint(int N, double * x, double x_const);
+void CheckAdditionalConstraints(int N_var, int N_constr, double * x, double * constr);
 void CheckConstraints(int N_var, int N_constr, double ** A, double * b, double * x, double * constr);
 double Lambda(int N, double ** Ainv, double * b, double x_const);
 

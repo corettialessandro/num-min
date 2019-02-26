@@ -14,18 +14,19 @@ double * MasslessShake(int N_var, int N_constr, double ** A, double * b, double 
     double time;
 
     int iter, k, i;
-    double discr = 0, gamk, gamma_N = 0.;
-    double * denom, * sigold;
+    double discr = 0, gamk;
+    double * denom, * sigold, * add_gamma;
 
     denom = AllocateDVector(N_constr);
     sigold = AllocateDVector(N_constr);
+    add_gamma = AllocateDVector(N_constr - N_var);
 
     for (i=0; i<N_var; i++) xold[i] = x0[i];
 
     for (k=0; k<N_constr; k++) {
 
         denom[k] = Denom(k, N_var, A);
-        sigold[k] = Sigma(k, N_var, A, b, xold, constr, gamma_N);
+        sigold[k] = Sigma(k, N_var, N_constr, A, b, xold, constr, add_gamma);
     }
 
     discr = Norm_inf(N_constr, sigold);
@@ -34,7 +35,7 @@ double * MasslessShake(int N_var, int N_constr, double ** A, double * b, double 
 
         for (k=0; k<N_constr; k++) {
 
-            sigold[k] = Sigma(k, N_var, A, b, xold, constr, gamma_N);
+            sigold[k] = Sigma(k, N_var, N_constr, A, b, xold, constr, add_gamma);
 
             if (fabs(sigold[k]) > tol) {
 
@@ -42,7 +43,7 @@ double * MasslessShake(int N_var, int N_constr, double ** A, double * b, double 
 
                 gamk = sigold[k]/denom[k];
 
-                if (k >= N_var) gamma_N -= gamk;
+                if (k >= N_var) add_gamma[k - N_var] -= gamk;
 
                 for (i=0; i<N_var; i++) {
 
@@ -68,6 +69,7 @@ double * MasslessShake(int N_var, int N_constr, double ** A, double * b, double 
 
     FreeDVector(N_constr, denom);
     FreeDVector(N_constr, sigold);
+    FreeDVector(N_constr-N_var, add_gamma);
 
     tfinish = clock();
 
@@ -79,21 +81,23 @@ double * MasslessShake(int N_var, int N_constr, double ** A, double * b, double 
     return xold;
 }
 
-double Sigma(int k, int N_var, double ** A, double * b, double * x, double * constr, double gamma_N) {
+double Sigma(int k, int N_var, int N_constr, double ** A, double * b, double * x, double * constr, double * add_gamma) {
 
    double sigma_k;
 
    int i;
+   int delta_N = (N_constr-N_var);
 
    if (k < N_var) {
 
-      sigma_k = -b[k] - constr[k] - gamma_N;
+      sigma_k = -b[k] - constr[k];
+      (k < N_var/delta_N) ? (sigma_k -= add_gamma[0]) : (sigma_k -= add_gamma[1]);
       for (i = 0; i < N_var; i++) sigma_k += A[k][i] * x[i];
 
    } else {
 
       sigma_k = -constr[k];
-      for (i = 0; i < N_var; i++) sigma_k += x[i];
+      for (i = ((k-N_var)*N_var/delta_N); i < ((k-N_var+1)*N_var/delta_N); i++) sigma_k += x[i];
    }
 
    return sigma_k;
