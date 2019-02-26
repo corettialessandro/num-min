@@ -23,5 +23,6 @@
 #include "ML_BSHAKE.h"
 
 void Unconstrained(int N_var, int N_constr, double ** A, double * b, double * x0, double * constr, int verbose, int werbose, double tol, int maxiter, int nblocks, double * xF_AN, double * xF_CG, double * xF_SH, double * xF_BSH);
+double Lambda(int N, double ** Ainv, double * b, double x_const);
 
 #endif /* Unconstrained_h */

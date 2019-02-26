@@ -49,11 +49,10 @@ void Reduced(int N, double x_const, double ** A, double * b, double * x0, double
    red_maxerr_CG = MaxIterError(N-1, xF_AN, xF_CG);
    xF_SH = MasslessShake(N-1, N-1, red_A, red_b, red_x0, red_constr, tol, maxiter, xF_SH);
    red_maxerr_SH = MaxIterError(N-1, xF_AN, xF_SH);
-   // xF_BSH = MasslessBlockShake(N-1, nblocks, red_A, red_b, red_x0, tol, maxiter, xF_BSH);
 
-   CheckOtherConstraints(N-1, red_A, red_b, xF_AN, tol);
-   CheckOtherConstraints(N-1, red_A, red_b, xF_CG, tol);
-   CheckOtherConstraints(N-1, red_A, red_b, xF_SH, tol);
+   // if (verbose) CheckOtherConstraints(N-1, red_A, red_b, xF_AN);
+   // if (verbose) CheckOtherConstraints(N-1, red_A, red_b, xF_CG);
+   // if (verbose) CheckOtherConstraints(N-1, red_A, red_b, xF_SH);
 
    if (verbose) PrintVector(N-1, xF_AN, "xF_AN Reduced");
    if (verbose) PrintVector(N-1, xF_CG, "xF_CG Reduced");
@@ -81,11 +80,11 @@ void Reduced(int N, double x_const, double ** A, double * b, double * x0, double
    if (werbose) WriteVector("xF_CG.out", "output/", N, xF_CG, "xF_CG");
    if (werbose) WriteVector("xF_SH.out", "output/", N, xF_SH, "xF_SH");
 
-   CheckAdditionalConstraint(N, xF_CG, x_const, tol);
-   CheckAdditionalConstraint(N, xF_SH, x_const, tol);
-
-   CheckOtherConstraints(N, A, b, xF_CG, tol);
-   CheckOtherConstraints(N, A, b, xF_SH, tol);
+   // if (verbose) CheckAdditionalConstraint(N, xF_CG, constr[N_constr - 1]);
+   // if (verbose) CheckAdditionalConstraint(N, xF_SH, constr[N_constr - 1]);
+   //
+   // if (verbose) CheckOtherConstraints(N, A, b, xF_CG);
+   // if (verbose) CheckOtherConstraints(N, A, b, xF_SH);
 
    FreeMatrix(N-1, N-1, red_A);
    FreeDVector(N-1, red_b);
@@ -105,7 +104,7 @@ double ** Reduce_A(int N, double ** A, double ** A_reduced){
 
    for (i = 0; i < N-1; i++) {
 
-      A_N [i] = A[N-1][i];
+      A_N[i] = A[N-1][i];
    }
 
    for (i = 0; i < N-1; i++) {
@@ -170,56 +169,4 @@ double LastComponent(int N, double * x_others, double x_const){
    xlast += x_const;
 
    return xlast;
-}
-
-void CheckAdditionalConstraint(int N, double * x, double x_const, double tol) {
-
-   int i;
-   double sum_x = 0;
-
-   for (i = 0; i < N; i++) {
-
-      sum_x += x[i];
-   }
-
-   if (fabs(sum_x - x_const) > tol) {
-      printf("\nAdditConstr.c -> CheckAdditionalConstraint() Error: Additional constraint not satisfied!\n");
-      printf("[DEBUG] sum = %.12e, x_const = %.12e\n", sum_x, x_const);
-      exit(EXIT_FAILURE);
-   }
-
-   return;
-}
-
-void CheckOtherConstraints(int N, double ** A, double * b, double * x, double tol) {
-
-   int k, i;
-   double discr = 0.;
-   double * sigma;
-
-   sigma = AllocateDVector(N);
-
-   for (k = 0; k < N; k++) {
-
-      sigma[k] = -b[k];
-
-      for (i = 0; i < N; i++) {
-
-         sigma[k] += A[k][i]*x[i];
-      }
-   }
-
-   discr = Norm_inf(N, sigma);
-
-   if (discr > 1.E1*tol) {
-      printf("\nAdditConstr.c -> CheckOtherConstraints() Error: Other constraints not satisfied!\n");
-      for (i = 0; i < N; i++) {
-         printf("[DEBUG] sigma[%d] = %.12e\n", i, sigma[i]);
-      }
-      exit(EXIT_FAILURE);
-   }
-
-   FreeDVector(N, sigma);
-
-   return;
 }

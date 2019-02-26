@@ -153,3 +153,52 @@ double SumComponents(int N, double * x) {
 
    return sum_components;
 }
+
+void CheckOtherConstraints(int N, double ** A, double * b, double * x, double * constr) {
+
+   int k, i;
+   double * sigma;
+
+   sigma = AllocateDVector(N);
+
+   for (k = 0; k < N; k++) {
+
+      sigma[k] = -b[k];
+
+      for (i = 0; i < N; i++) {
+
+         sigma[k] += A[k][i]*x[i];
+      }
+   }
+
+   printf("The residual of the constraints is:\n");
+   for (k = 0; k < N; k++) {
+      printf("sigma[%d] = %lf vs. constr[%d] = %lf\n", k, sigma[k], k, constr[k]);
+   }
+   printf("\n");
+
+   FreeDVector(N, sigma);
+
+   return;
+}
+
+void CheckAdditionalConstraint(int N, double * x, double x_const) {
+
+   double sum_x = 0;
+
+   sum_x = SumComponents(N, x);
+
+   printf("The sum of the components of the minimum point is:\n");
+   printf("sum_x = %lf vs. x_const = %lf\n", sum_x, x_const);
+   printf("\n");
+
+   return;
+}
+
+void CheckConstraints(int N_var, int N_constr, double ** A, double * b, double * x, double * constr) {
+
+   CheckOtherConstraints(N_var, A, b, x, constr);
+   if (N_constr - N_var == 1) CheckAdditionalConstraint(N_var, x, constr[N_constr-1]);
+
+   return;
+}
