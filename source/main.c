@@ -31,15 +31,14 @@ int main(int argc, char * argv[]) {
     double * b, * x0, * constr, * xF_AN, * xF_CG, * xF_SH, * xF_BSH;
     double ** A;
     char mode;
-    double x_const = 0;
     char inputfile[_MAXSTRLENGTH] = "input/input.inpt";
     char Afilename[_MAXSTRLENGTH], bfilename[_MAXSTRLENGTH], x0filename[_MAXSTRLENGTH], constrfilename[_MAXSTRLENGTH];
 
     GetOptions(argc, argv, &verbose, &werbose);
-    ReadInput(inputfile, &N_var, &N_constr, &nblocks, Afilename, bfilename, x0filename, constrfilename, &tol, &maxiter, &mode, &x_const);
+    ReadInput(inputfile, &N_var, &N_constr, &nblocks, Afilename, bfilename, x0filename, constrfilename, &tol, &maxiter, &mode);
 
-    PrintSetup(inputfile, N_var, N_constr, nblocks, Afilename, bfilename, x0filename, constrfilename, tol, maxiter, mode, x_const);
-    WriteSetup("logfile.out", "output/", N_var, N_constr, nblocks, Afilename, bfilename, x0filename, constrfilename, tol, maxiter, mode, x_const);
+    PrintSetup(inputfile, N_var, N_constr, nblocks, Afilename, bfilename, x0filename, constrfilename, tol, maxiter, mode, 0);
+    WriteSetup("logfile.out", "output/", N_var, N_constr, nblocks, Afilename, bfilename, x0filename, constrfilename, tol, maxiter, mode, 0);
 
     Initialize(N_var, N_constr, &A, &b, &x0, &constr, Afilename, bfilename, x0filename, constrfilename, verbose, &xF_AN, &xF_CG, &xF_SH, &xF_BSH);
 

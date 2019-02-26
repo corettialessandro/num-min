@@ -34,7 +34,7 @@ void Constrained(int N, double ** A, double * b, double * x0, double * constr, i
    if (werbose) WriteVector("constr_b.out", "output/", N, constr_b, "b Constrained");
    if (werbose) WriteVector("xF_AN.out", "output/", N, xF_AN, "xF_AN");
 
-   xF_SH = MasslessShake(N+1, N, A, b, x0, constr, tol, maxiter, x_const, xF_SH);
+   xF_SH = MasslessShake(N+1, N, A, b, x0, constr, tol, maxiter, xF_SH);
    maxerr_SH = MaxIterError(N, xF_AN, xF_SH);
    WriteError("logfile.out", "output/", 'S', maxerr_SH);
    if (verbose) PrintVector(N, xF_SH, "xF_SH");

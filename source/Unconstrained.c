@@ -37,7 +37,7 @@ void Unconstrained(int N_var, int N_constr, double ** A, double * b, double * x0
    printf("  Maximum error component on iterative solution (CG):\n");
    printf("  MAX|xf_AN - xf_CG| = %.4e\n\n", maxerr_CG);
 
-   xF_SH = MasslessShake(N_constr, N_var, A, b, x0, constr, tol, maxiter, 0, xF_SH);
+   xF_SH = MasslessShake(N_var, N_constr, A, b, x0, constr, tol, maxiter, xF_SH);
    maxerr_SH = MaxIterError(N_var, xF_AN, xF_SH);
    WriteError("logfile.out", "output/", 'S', maxerr_SH);
    if (verbose) PrintVector(N_var, xF_SH, "xF_SH");

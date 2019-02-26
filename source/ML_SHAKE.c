@@ -8,13 +8,13 @@
 
 #include "ML_SHAKE.h"
 
-double * MasslessShake(int N_constr, int N_var, double ** A, double * b, double * x0, double * constr, double tol, int maxiter, double x_const, double * xold) {
+double * MasslessShake(int N_var, int N_constr, double ** A, double * b, double * x0, double * constr, double tol, int maxiter, double * xold) {
 
     clock_t tstart = clock(), tfinish;
     double time;
 
     int iter, k, i;
-    double discr = 0, gamk;
+    double discr = 0, gamk, gamma_N = 0.;
     double * denom, * sigold;
 
     denom = AllocateDVector(N_constr);
@@ -25,7 +25,7 @@ double * MasslessShake(int N_constr, int N_var, double ** A, double * b, double 
     for (k=0; k<N_constr; k++) {
 
         denom[k] = Denom(k, N_var, A);
-        sigold[k] = Sigma(k, N_var, A, b, xold, constr, x_const);
+        sigold[k] = Sigma(k, N_var, A, b, xold, constr, gamma_N);
     }
 
     discr = Norm_inf(N_constr, sigold);
@@ -34,7 +34,7 @@ double * MasslessShake(int N_constr, int N_var, double ** A, double * b, double 
 
         for (k=0; k<N_constr; k++) {
 
-            sigold[k] = Sigma(k, N_var, A, b, xold, constr, x_const);
+            sigold[k] = Sigma(k, N_var, A, b, xold, constr, gamma_N);
 
             if (fabs(sigold[k]) > tol) {
 
@@ -42,10 +42,7 @@ double * MasslessShake(int N_constr, int N_var, double ** A, double * b, double 
 
                 gamk = sigold[k]/denom[k];
 
-                if (k >= N_var) {
-
-                   constr[k - N_var] -= gamk;
-                }
+                if (k >= N_var) gamma_N -= gamk;
 
                 for (i=0; i<N_var; i++) {
 
@@ -82,7 +79,7 @@ double * MasslessShake(int N_constr, int N_var, double ** A, double * b, double 
     return xold;
 }
 
-double Sigma(int k, int N_var, double ** A, double * b, double * x, double * constr, double x_const) {
+double Sigma(int k, int N_var, double ** A, double * b, double * x, double * constr, double gamma_N) {
 
    double sigma_k;
 
@@ -90,12 +87,12 @@ double Sigma(int k, int N_var, double ** A, double * b, double * x, double * con
 
    if (k < N_var) {
 
-      sigma_k = -b[k] - constr[k];
+      sigma_k = -b[k] - constr[k] - gamma_N;
       for (i = 0; i < N_var; i++) sigma_k += A[k][i] * x[i];
 
    } else {
 
-      sigma_k = -x_const;
+      sigma_k = -constr[k];
       for (i = 0; i < N_var; i++) sigma_k += x[i];
    }
 

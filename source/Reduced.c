@@ -47,7 +47,7 @@ void Reduced(int N, double x_const, double ** A, double * b, double * x0, double
    xF_AN = RowbyColProd(N-1, red_Ainv, red_b, xF_AN);
    xF_CG = ConjugateGradient(N-1, red_A, red_b, red_x0, tol, maxiter, xF_CG);
    red_maxerr_CG = MaxIterError(N-1, xF_AN, xF_CG);
-   xF_SH = MasslessShake(N-1, N-1, red_A, red_b, red_x0, red_constr, tol, maxiter, -1, xF_SH);
+   xF_SH = MasslessShake(N-1, N-1, red_A, red_b, red_x0, red_constr, tol, maxiter, xF_SH);
    red_maxerr_SH = MaxIterError(N-1, xF_AN, xF_SH);
    // xF_BSH = MasslessBlockShake(N-1, nblocks, red_A, red_b, red_x0, tol, maxiter, xF_BSH);
 
