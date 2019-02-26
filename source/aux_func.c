@@ -202,3 +202,19 @@ void CheckConstraints(int N_var, int N_constr, double ** A, double * b, double *
 
    return;
 }
+
+double Lambda(int N, double ** Ainv, double * b, double x_const) {
+
+   int i, j;
+   double IdAinvb = 0., IdAinvId = 0.;
+
+   for (i = 0; i < N; i++) {
+      for (j = 0; j < N; j++) {
+
+         IdAinvb += Ainv[i][j]*b[j];
+         IdAinvId += Ainv[i][j];
+      }
+   }
+
+   return (x_const-IdAinvb)/IdAinvId;
+}

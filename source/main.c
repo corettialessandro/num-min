@@ -16,9 +16,7 @@
 #include "Matrix.h"
 #include "Vector.h"
 #include "Analysis.h"
-#include "Unconstrained.h"
-#include "Reduced.h"
-#include "Constrained.h"
+#include "Minimization.h"
 
 #define _MAXSTRLENGTH 50
 
@@ -30,35 +28,20 @@ int main(int argc, char * argv[]) {
     double tol;
     double * b, * x0, * constr, * xF_AN, * xF_CG, * xF_SH, * xF_BSH;
     double ** A;
-    char mode;
     char inputfile[_MAXSTRLENGTH] = "input/input.inpt";
     char Afilename[_MAXSTRLENGTH], bfilename[_MAXSTRLENGTH], x0filename[_MAXSTRLENGTH], constrfilename[_MAXSTRLENGTH];
 
     GetOptions(argc, argv, &verbose, &werbose);
-    ReadInput(inputfile, &N_var, &N_constr, &nblocks, Afilename, bfilename, x0filename, constrfilename, &tol, &maxiter, &mode);
+    ReadInput(inputfile, &N_var, &N_constr, &nblocks, Afilename, bfilename, x0filename, constrfilename, &tol, &maxiter);
 
-    PrintSetup(inputfile, N_var, N_constr, nblocks, Afilename, bfilename, x0filename, constrfilename, tol, maxiter, mode, 0);
-    WriteSetup("logfile.out", "output/", N_var, N_constr, nblocks, Afilename, bfilename, x0filename, constrfilename, tol, maxiter, mode, 0);
+    PrintSetup(inputfile, N_var, N_constr, nblocks, Afilename, bfilename, x0filename, constrfilename, tol, maxiter, 0);
+    WriteSetup("logfile.out", "output/", N_var, N_constr, nblocks, Afilename, bfilename, x0filename, constrfilename, tol, maxiter, 0);
 
     Initialize(N_var, N_constr, &A, &b, &x0, &constr, Afilename, bfilename, x0filename, constrfilename, verbose, &xF_AN, &xF_CG, &xF_SH, &xF_BSH);
 
     Analyse(N_var, A, b, x0, verbose, werbose);
 
-   switch (mode) {
-
-      case 'U':
-         Unconstrained(N_var, N_constr, A, b, x0, constr, verbose, werbose, tol, maxiter, nblocks, xF_AN, xF_CG, xF_SH, xF_BSH);
-         break;
-      // case 'R':
-      //    Reduced(N, x_const, A, b, x0, constr, verbose, werbose, tol, maxiter, nblocks, xF_AN, xF_CG, xF_SH, xF_BSH);
-      //    break;
-      // case 'C':
-      //    Constrained(N, A, b, x0, constr, verbose, werbose, tol, maxiter, x_const, xF_AN, xF_SH);
-      //    break;
-      default:
-         printf("Unrecognized execution mode: mode = %c.\nTerminating.\n\n", mode);
-         exit(EXIT_FAILURE);
-   }
+    Minimize(N_var, N_constr, A, b, x0, constr, verbose, werbose, tol, maxiter, nblocks, xF_AN, xF_CG, xF_SH, xF_BSH);
 
     Finalize(N_var, N_constr, &A, &b, &x0, &constr, &xF_AN, &xF_CG, &xF_SH, &xF_BSH);
 

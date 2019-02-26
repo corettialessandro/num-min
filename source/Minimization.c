@@ -1,14 +1,14 @@
 //
-//  Unconstrained.c
+//  Minimization.c
 //  NumMin
 //
 //  Created by Alessandro Coretti on 02/17/19.
 //  Copyright © 2019 Alessandro Coretti. All rights reserved.
 //
 
-#include "Unconstrained.h"
+#include "Minimization.h"
 
-void Unconstrained(int N_var, int N_constr, double ** A, double * b, double * x0, double * constr, int verbose, int werbose, double tol, int maxiter, int nblocks, double * xF_AN, double * xF_CG, double * xF_SH, double * xF_BSH) {
+void Minimize(int N_var, int N_constr, double ** A, double * b, double * x0, double * constr, int verbose, int werbose, double tol, int maxiter, int nblocks, double * xF_AN, double * xF_CG, double * xF_SH, double * xF_BSH) {
 
    double maxerr_CG, maxerr_SH, maxerr_BSH;
    double lambda = 0;
@@ -66,20 +66,4 @@ void Unconstrained(int N_var, int N_constr, double ** A, double * b, double * x0
    FreeDVector(N_var, bconstr);
 
    return;
-}
-
-double Lambda(int N, double ** Ainv, double * b, double x_const) {
-
-   int i, j;
-   double IdAinvb = 0., IdAinvId = 0.;
-
-   for (i = 0; i < N; i++) {
-      for (j = 0; j < N; j++) {
-
-         IdAinvb += Ainv[i][j]*b[j];
-         IdAinvId += Ainv[i][j];
-      }
-   }
-
-   return (x_const-IdAinvb)/IdAinvId;
 }

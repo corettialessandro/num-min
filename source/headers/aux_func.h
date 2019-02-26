@@ -28,5 +28,6 @@ double SumComponents(int N, double * x);
 void CheckOtherConstraints(int N, double ** A, double * b, double * x, double * constr);
 void CheckAdditionalConstraint(int N, double * x, double x_const);
 void CheckConstraints(int N_var, int N_constr, double ** A, double * b, double * x, double * constr);
+double Lambda(int N, double ** Ainv, double * b, double x_const);
 
 #endif /* aux_func_h */
