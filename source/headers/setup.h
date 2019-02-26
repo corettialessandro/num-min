@@ -15,7 +15,7 @@
 #include <Vector.h>
 #include <output.h>
 
-void Initialize(int N, double *** A, double ** b, double ** x0, char * Afilename, char * bfilename, char * x0filename, int verbose, double ** xF_AN, double ** xF_CG, double ** xF_SH, double ** xF_BSH);
-void Finalize(int N, double *** A, double ** b, double ** x0, double ** xF_AN, double ** xF_CG, double ** xF_SH, double ** xF_BSH);
+void Initialize(int N, double *** A, double ** b, double ** x0, double ** constr, char * Afilename, char * bfilename, char * x0filename, char * constrfilename, int verbose, double ** xF_AN, double ** xF_CG, double ** xF_SH, double ** xF_BSH);
+void Finalize(int N, double *** A, double ** b, double ** x0, double ** constr, double ** xF_AN, double ** xF_CG, double ** xF_SH, double ** xF_BSH);
 
 #endif /* setup_h */

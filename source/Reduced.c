@@ -8,11 +8,11 @@
 
 #include "Reduced.h"
 
-void Reduced(int N, double x_const, double ** A, double * b, double * x0, int verbose, int werbose, double tol, int maxiter, int nblocks, double * xF_AN, double * xF_CG, double * xF_SH, double * xF_BSH) {
+void Reduced(int N, double x_const, double ** A, double * b, double * x0, double * constr, int verbose, int werbose, double tol, int maxiter, int nblocks, double * xF_AN, double * xF_CG, double * xF_SH, double * xF_BSH) {
 
    double red_maxerr_CG, red_maxerr_SH;
    double maxerr_CG, maxerr_SH;
-   double * red_b, * red_x0;
+   double * red_b, * red_x0, * red_constr;
    double ** red_A, ** red_Ainv;
    clock_t red_an_tstart, red_an_tfinish;
    double red_an_time;
@@ -20,19 +20,23 @@ void Reduced(int N, double x_const, double ** A, double * b, double * x0, int ve
    red_A = AllocateMatrix(N-1, N-1);
    red_b = AllocateDVector(N-1);
    red_x0 = AllocateDVector(N-1);
+   red_constr = AllocateDVector(N-1);
    red_Ainv = AllocateMatrix(N-1, N-1);
 
    red_A = Reduce_A(N, A, red_A);
    red_b = Reduce_b(N, b, A[N-1], x_const, red_b);
    red_x0 = Reduce_x0(N, x0, red_x0);
+   red_constr = Reduce_constr(N, constr, red_constr);
 
    if (verbose) PrintMatrix(N-1, N-1, red_A, "A Reduced");
    if (verbose) PrintVector(N-1, red_b, "b Reduced");
-   if (verbose) PrintVector(N-1, x0, "x0 Reduced");
+   if (verbose) PrintVector(N-1, red_x0, "x0 Reduced");
+   if (verbose) PrintVector(N-1, red_constr, "constr Reduced");
 
    if (werbose) WriteMatrix("red_A.out", "output/", N-1, N-1, red_A, "A Reduced");
    if (werbose) WriteVector("red_b.out", "output/", N-1, red_b, "b Reduced");
    if (werbose) WriteVector("red_x0.out", "output/", N-1, red_x0, "x0 Reduced");
+   if (werbose) WriteVector("red_constr.out", "output/", N-1, red_constr, "constr Reduced");
 
    red_an_tstart = clock();
    red_Ainv = InvertMatrix(N-1, red_A, red_Ainv);
@@ -43,7 +47,7 @@ void Reduced(int N, double x_const, double ** A, double * b, double * x0, int ve
    xF_AN = RowbyColProd(N-1, red_Ainv, red_b, xF_AN);
    xF_CG = ConjugateGradient(N-1, red_A, red_b, red_x0, tol, maxiter, xF_CG);
    red_maxerr_CG = MaxIterError(N-1, xF_AN, xF_CG);
-   xF_SH = MasslessShake(N-1, N-1, red_A, red_b, red_x0, tol, maxiter, -1, 0, 0, xF_SH);
+   xF_SH = MasslessShake(N-1, N-1, red_A, red_b, red_x0, red_constr, tol, maxiter, -1, xF_SH);
    red_maxerr_SH = MaxIterError(N-1, xF_AN, xF_SH);
    // xF_BSH = MasslessBlockShake(N-1, nblocks, red_A, red_b, red_x0, tol, maxiter, xF_BSH);
 
@@ -139,6 +143,18 @@ double * Reduce_x0(int N, double * x0, double * x0_reduced){
    }
 
    return x0_reduced;
+}
+
+double * Reduce_constr(int N, double * constr, double * constr_reduced){
+
+   int i;
+
+   for (i = 0; i < N-1; i++) {
+
+      constr_reduced[i] = 0.;
+   }
+
+   return constr_reduced;
 }
 
 double LastComponent(int N, double * x_others, double x_const){

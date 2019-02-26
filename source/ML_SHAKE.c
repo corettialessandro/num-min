@@ -8,7 +8,7 @@
 
 #include "ML_SHAKE.h"
 
-double * MasslessShake(int N_constr, int N_var, double ** A, double * b, double * x0, double tol, int maxiter, double x_const, double gamma_N, double gamma_Np1, double * xold) {
+double * MasslessShake(int N_constr, int N_var, double ** A, double * b, double * x0, double * constr, double tol, int maxiter, double x_const, double * xold) {
 
     clock_t tstart = clock(), tfinish;
     double time;
@@ -25,7 +25,7 @@ double * MasslessShake(int N_constr, int N_var, double ** A, double * b, double 
     for (k=0; k<N_constr; k++) {
 
         denom[k] = Denom(k, N_var, A);
-        sigold[k] = Sigma(k, N_var, A, b, xold, x_const, gamma_N, gamma_Np1);
+        sigold[k] = Sigma(k, N_var, A, b, xold, constr, x_const);
     }
 
     discr = Norm_inf(N_constr, sigold);
@@ -34,7 +34,7 @@ double * MasslessShake(int N_constr, int N_var, double ** A, double * b, double 
 
         for (k=0; k<N_constr; k++) {
 
-            sigold[k] = Sigma(k, N_var, A, b, xold, x_const, gamma_N, gamma_Np1);
+            sigold[k] = Sigma(k, N_var, A, b, xold, constr, x_const);
 
             if (fabs(sigold[k]) > tol) {
 
@@ -42,11 +42,14 @@ double * MasslessShake(int N_constr, int N_var, double ** A, double * b, double 
 
                 gamk = sigold[k]/denom[k];
 
-                if (k == N_var) gamma_Np1 = gamma_N -= gamk;
+                if (k >= N_var) {
+
+                   constr[k - N_var] -= gamk;
+                }
 
                 for (i=0; i<N_var; i++) {
 
-                    if (k < N_var) xold[i] -= gamk*A[k][i];// : (xold[i] -= gamk);
+                    if (k < N_var) xold[i] -= gamk*A[k][i];
                 }
             }
         }
@@ -58,11 +61,7 @@ double * MasslessShake(int N_constr, int N_var, double ** A, double * b, double 
         if (discr < tol) break;
     }
 
-    printf("[DEBUG] gamma_N = %lf\n", gamma_N);
-    printf("[DEBUG] gamma_Np1 = %lf\n", gamma_Np1);
-    printf("[DEBUG] sigma_0 = %lf\n", Sigma(0, N_var, A, b, xold, x_const, 0, gamma_Np1));
-    printf("[DEBUG] sigma_Nm1 = %lf\n", Sigma(N_var-1, N_var, A, b, xold, x_const, gamma_N, 0));
-    printf("[DEBUG] x_const = %lf\n", Sigma(N_var, N_var, A, b, xold, x_const, gamma_N, gamma_Np1));
+    // for (k = 0; k < N_constr; k++) printf("sigma[%d] = %.12e\n", k, sigold[k] + constr[k]);
 
     if (iter == maxiter){
 
@@ -83,7 +82,7 @@ double * MasslessShake(int N_constr, int N_var, double ** A, double * b, double 
     return xold;
 }
 
-double Sigma(int k, int N_var, double ** A, double * b, double * x, double x_const, double gamma_N, double gamma_Np1) {
+double Sigma(int k, int N_var, double ** A, double * b, double * x, double * constr, double x_const) {
 
    double sigma_k;
 
@@ -91,8 +90,7 @@ double Sigma(int k, int N_var, double ** A, double * b, double * x, double x_con
 
    if (k < N_var) {
 
-      sigma_k = -b[k];
-      (k<.5*N_var) ? (sigma_k -= gamma_N) : (sigma_k -= gamma_Np1);
+      sigma_k = -b[k] - constr[k];
       for (i = 0; i < N_var; i++) sigma_k += A[k][i] * x[i];
 
    } else {

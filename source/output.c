@@ -8,7 +8,7 @@
 
 #include "output.h"
 
-void PrintSetup(char * inputfile, int dimension, int nblocks, char * Afilename, char * bfilename, char * x0filename, double tol, int maxiter, char mode, double x_const) {
+void PrintSetup(char * inputfile, int dimension, int nblocks, char * Afilename, char * bfilename, char * x0filename, char * constrfilename, double tol, int maxiter, char mode, double x_const) {
 
    printf("\nNumerical Minimization Test Program\n\n");
    printf("Input Parameters:\n");
@@ -17,6 +17,7 @@ void PrintSetup(char * inputfile, int dimension, int nblocks, char * Afilename, 
    printf("A Matrix input file: '%s'\n", Afilename);
    printf("B vector input file: '%s'\n", bfilename);
    printf("Initial point input file: '%s'\n", x0filename);
+   printf("Values of constraints input file: '%s'\n", constrfilename);
    printf("Tolerance: tol = %.4e\n", tol);
    printf("Maximum number of allowed iterations: maxiter = %d\n", maxiter);
    printf("Constrained problem: ");
@@ -127,7 +128,7 @@ void PrintStats(char method, int nblocks, int iter, double exectime, double disc
     return;
 }
 
-void WriteSetup(char * outputfile, char * outputpath, int dimension, int nblocks, char * Afilename, char * bfilename, char * x0filename, double tol, int maxiter, char mode, double x_const) {
+void WriteSetup(char * outputfile, char * outputpath, int dimension, int nblocks, char * Afilename, char * bfilename, char * x0filename, char * constrfilename, double tol, int maxiter, char mode, double x_const) {
 
     FILE * fp_setup;
 
@@ -147,6 +148,7 @@ void WriteSetup(char * outputfile, char * outputpath, int dimension, int nblocks
    fprintf(fp_setup, "A Matrix input file: '%s'\n", Afilename);
    fprintf(fp_setup, "B vector input file: '%s'\n", bfilename);
    fprintf(fp_setup, "Initial point input file: '%s'\n", x0filename);
+   fprintf(fp_setup, "Values of constraints input file: '%s'\n", constrfilename);
    fprintf(fp_setup, "Tolerance: tol = %.4e\n", tol);
    fprintf(fp_setup, "Maximum number of allowed iterations: maxiter = %d\n", maxiter);
    fprintf(fp_setup, "Constrained problem: ");

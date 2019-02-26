@@ -37,7 +37,7 @@ void GetOptions(int argc, char * argv[], int * verbose, int * werbose) {
     return;
 }
 
-void ReadInput(char * inputfile, int * dimension, int * nblocks, char * Afilename, char * bfilename, char * x0filename, double * tol, int * maxiter, char * mode, double * x_const) {
+void ReadInput(char * inputfile, int * dimension, int * nblocks, char * Afilename, char * bfilename, char * x0filename, char * constrfilename, double * tol, int * maxiter, char * mode, double * x_const) {
 
     FILE *fp_input;
 
@@ -51,6 +51,7 @@ void ReadInput(char * inputfile, int * dimension, int * nblocks, char * Afilenam
     fscanf(fp_input, "%s %*[^\n]", Afilename);
     fscanf(fp_input, "%s %*[^\n]", bfilename);
     fscanf(fp_input, "%s %*[^\n]", x0filename);
+    fscanf(fp_input, "%s %*[^\n]", constrfilename);
     fscanf(fp_input, "%lf %*[^\n]", tol);
     fscanf(fp_input, "%d %*[^\n]", maxiter);
     fscanf(fp_input, " %c %*[^\n]", mode);

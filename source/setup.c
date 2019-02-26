@@ -8,11 +8,12 @@
 
 #include "setup.h"
 
-void Initialize(int N, double *** A, double ** b, double ** x0, char * Afilename, char * bfilename, char * x0filename, int verbose, double ** xF_AN, double ** xF_CG, double ** xF_SH, double ** xF_BSH) {
+void Initialize(int N, double *** A, double ** b, double ** x0, double ** constr, char * Afilename, char * bfilename, char * x0filename, char * constrfilename, int verbose, double ** xF_AN, double ** xF_CG, double ** xF_SH, double ** xF_BSH) {
 
    *A = AllocateMatrix(N, N);
    *b = AllocateDVector(N);
    *x0 = AllocateDVector(N);
+   *constr = AllocateDVector(N);
    *xF_AN = AllocateDVector(N);
    *xF_CG = AllocateDVector(N);
    *xF_SH = AllocateDVector(N);
@@ -21,19 +22,22 @@ void Initialize(int N, double *** A, double ** b, double ** x0, char * Afilename
    *A = ReadMatrix(N, N, *A, Afilename);
    *b = ReadDVector(N, *b, bfilename);
    *x0 = ReadDVector(N, *x0, x0filename);
+   *constr = ReadDVector(N, *constr, constrfilename);
 
    if (verbose) PrintMatrix(N, N, *A, "A");
    if (verbose) PrintVector(N, *b, "b");
    if (verbose) PrintVector(N, *x0, "x0");
+   if (verbose) PrintVector(N, *constr, "constr");
 
    return;
 }
 
-void Finalize(int N, double *** A, double ** b, double ** x0, double ** xF_AN, double ** xF_CG, double ** xF_SH, double ** xF_BSH) {
+void Finalize(int N, double *** A, double ** b, double ** x0, double ** constr, double ** xF_AN, double ** xF_CG, double ** xF_SH, double ** xF_BSH) {
 
    FreeMatrix(N, N, *A);
    FreeDVector(N, *b);
    FreeDVector(N, *x0);
+   FreeDVector(N, *constr);
    FreeDVector(N, *xF_AN);
    FreeDVector(N, *xF_CG);
    FreeDVector(N, *xF_SH);

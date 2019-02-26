@@ -19,7 +19,7 @@
 #include "ML_SHAKE.h"
 #include "ML_BSHAKE.h"
 
-void Constrained(int N, double ** A, double * b, double * x0, int verbose, int werbose, double tol, int maxiter, double x_const, double * xF_AN, double * xF_SH);
+void Constrained(int N, double ** A, double * b, double * x0, double * constr, int verbose, int werbose, double tol, int maxiter, double x_const, double * xF_AN, double * xF_SH);
 double * Constrain_b(int N, double ** Ainv, double * b, double x_const, double * constr_b);
 
 #endif /* Constrained_h */

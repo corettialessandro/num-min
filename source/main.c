@@ -28,40 +28,40 @@ int main(int argc, char * argv[]) {
 
     int N, nblocks, maxiter, verbose = 0, werbose = 0;
     double tol;
-    double * b, * x0, * xF_AN, * xF_CG, * xF_SH, * xF_BSH;
+    double * b, * x0, * constr, * xF_AN, * xF_CG, * xF_SH, * xF_BSH;
     double ** A;
     char mode;
     double x_const = 0;
     char inputfile[_MAXSTRLENGTH] = "input/input.inpt";
-    char Afilename[_MAXSTRLENGTH], bfilename[_MAXSTRLENGTH], x0filename[_MAXSTRLENGTH];
+    char Afilename[_MAXSTRLENGTH], bfilename[_MAXSTRLENGTH], x0filename[_MAXSTRLENGTH], constrfilename[_MAXSTRLENGTH];
 
     GetOptions(argc, argv, &verbose, &werbose);
-    ReadInput(inputfile, &N, &nblocks, Afilename, bfilename, x0filename, &tol, &maxiter, &mode, &x_const);
+    ReadInput(inputfile, &N, &nblocks, Afilename, bfilename, x0filename, constrfilename, &tol, &maxiter, &mode, &x_const);
 
-    PrintSetup(inputfile, N, nblocks, Afilename, bfilename, x0filename, tol, maxiter, mode, x_const);
-    WriteSetup("logfile.out", "output/", N, nblocks, Afilename, bfilename, x0filename, tol, maxiter, mode, x_const);
+    PrintSetup(inputfile, N, nblocks, Afilename, bfilename, x0filename, constrfilename, tol, maxiter, mode, x_const);
+    WriteSetup("logfile.out", "output/", N, nblocks, Afilename, bfilename, x0filename, constrfilename, tol, maxiter, mode, x_const);
 
-    Initialize(N, &A, &b, &x0, Afilename, bfilename, x0filename, verbose, &xF_AN, &xF_CG, &xF_SH, &xF_BSH);
+    Initialize(N, &A, &b, &x0, &constr, Afilename, bfilename, x0filename, constrfilename, verbose, &xF_AN, &xF_CG, &xF_SH, &xF_BSH);
 
     Analyse(N, A, b, x0, verbose, werbose);
 
    switch (mode) {
 
       case 'U':
-         Unconstrained(N, A, b, x0, verbose, werbose, tol, maxiter, nblocks, xF_AN, xF_CG, xF_SH, xF_BSH);
+         Unconstrained(N, A, b, x0, constr, verbose, werbose, tol, maxiter, nblocks, xF_AN, xF_CG, xF_SH, xF_BSH);
          break;
       case 'R':
-         Reduced(N, x_const, A, b, x0, verbose, werbose, tol, maxiter, nblocks, xF_AN, xF_CG, xF_SH, xF_BSH);
+         Reduced(N, x_const, A, b, x0, constr, verbose, werbose, tol, maxiter, nblocks, xF_AN, xF_CG, xF_SH, xF_BSH);
          break;
       case 'C':
-         Constrained(N, A, b, x0, verbose, werbose, tol, maxiter, x_const, xF_AN, xF_SH);
+         Constrained(N, A, b, x0, constr, verbose, werbose, tol, maxiter, x_const, xF_AN, xF_SH);
          break;
       default:
          printf("Unrecognized execution mode: mode = %c.\nTerminating.\n\n", mode);
          exit(EXIT_FAILURE);
    }
 
-    Finalize(N, &A, &b, &x0, &xF_AN, &xF_CG, &xF_SH, &xF_BSH);
+    Finalize(N, &A, &b, &x0, &constr, &xF_AN, &xF_CG, &xF_SH, &xF_BSH);
 
     return 0;
 }

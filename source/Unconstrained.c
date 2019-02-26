@@ -8,7 +8,7 @@
 
 #include "Unconstrained.h"
 
-void Unconstrained(int N, double ** A, double * b, double * x0, int verbose, int werbose, double tol, int maxiter, int nblocks, double * xF_AN, double * xF_CG, double * xF_SH, double * xF_BSH) {
+void Unconstrained(int N, double ** A, double * b, double * x0, double * constr, int verbose, int werbose, double tol, int maxiter, int nblocks, double * xF_AN, double * xF_CG, double * xF_SH, double * xF_BSH) {
 
    double maxerr_CG, maxerr_SH, maxerr_BSH;
    double ** Ainv;
@@ -37,7 +37,7 @@ void Unconstrained(int N, double ** A, double * b, double * x0, int verbose, int
    printf("  Maximum error component on iterative solution (CG):\n");
    printf("  MAX|xf_AN - xf_CG| = %.4e\n\n", maxerr_CG);
 
-   xF_SH = MasslessShake(N, N, A, b, x0, tol, maxiter, 0, +1, -1, xF_SH);
+   xF_SH = MasslessShake(N, N, A, b, x0, constr, tol, maxiter, 0, xF_SH);
    maxerr_SH = MaxIterError(N, xF_AN, xF_SH);
    WriteError("logfile.out", "output/", 'S', maxerr_SH);
    if (verbose) PrintVector(N, xF_SH, "xF_SH");
