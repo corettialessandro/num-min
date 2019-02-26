@@ -34,8 +34,8 @@ int main(int argc, char * argv[]) {
     GetOptions(argc, argv, &verbose, &werbose);
     ReadInput(inputfile, &N_var, &N_constr, &nblocks, Afilename, bfilename, x0filename, constrfilename, &tol, &maxiter);
 
-    PrintSetup(inputfile, N_var, N_constr, nblocks, Afilename, bfilename, x0filename, constrfilename, tol, maxiter, 0);
-    WriteSetup("logfile.out", "output/", N_var, N_constr, nblocks, Afilename, bfilename, x0filename, constrfilename, tol, maxiter, 0);
+    PrintSetup(inputfile, N_var, N_constr, nblocks, Afilename, bfilename, x0filename, constrfilename, constr, tol, maxiter);
+    WriteSetup("logfile.out", "output/", N_var, N_constr, nblocks, Afilename, bfilename, x0filename, constrfilename, constr, tol, maxiter);
 
     Initialize(N_var, N_constr, &A, &b, &x0, &constr, Afilename, bfilename, x0filename, constrfilename, verbose, &xF_AN, &xF_CG, &xF_SH, &xF_BSH);
 

@@ -34,7 +34,7 @@ void Minimize(int N_var, int N_constr, double ** A, double * b, double * x0, dou
    if (werbose) WriteMatrix("Ainv.out", "output/", N_var, N_var, Ainv, "A^{-1}");
    if (werbose) WriteVector("xF_AN.out", "output/", N_var, xF_AN, "xF_AN");
 
-   CheckConstraints(N_var, N_constr, A, b, xF_AN, constr);
+   if (verbose) CheckConstraints(N_var, N_constr, A, b, xF_AN, constr);
 
    // xF_CG = ConjugateGradient(N_var, A, b, x0, tol, maxiter, xF_CG);
    // maxerr_CG = MaxIterError(N_var, xF_AN, xF_CG);

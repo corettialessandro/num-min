@@ -8,12 +8,13 @@
 
 #include "output.h"
 
-void PrintSetup(char * inputfile, int dimension, int nconstraints, int nblocks, char * Afilename, char * bfilename, char * x0filename, char * constrfilename, double tol, int maxiter, char mode, double x_const) {
+void PrintSetup(char * inputfile, int dimension, int nconstraints, int nblocks, char * Afilename, char * bfilename, char * x0filename, char * constrfilename, double * constr, double tol, int maxiter) {
 
    printf("\nNumerical Minimization Test Program\n\n");
    printf("Input Parameters:\n");
    printf("Dimension: N_var = %d\n", dimension);
    printf("Number of constraints: N_constr = %d\n", nconstraints);
+   if (nconstraints - dimension == 1) printf("Additional constraint: x_const = %.4lf\n", constr[nconstraints-1]);
    printf("Number of blocks for BSHAKE: nblocks = %d\n", nblocks);
    printf("A Matrix input file: '%s'\n", Afilename);
    printf("B vector input file: '%s'\n", bfilename);
@@ -21,12 +22,6 @@ void PrintSetup(char * inputfile, int dimension, int nconstraints, int nblocks, 
    printf("Values of constraints input file: '%s'\n", constrfilename);
    printf("Tolerance: tol = %.4e\n", tol);
    printf("Maximum number of allowed iterations: maxiter = %d\n", maxiter);
-   printf("Constrained problem: ");
-   if (mode != 'U') {
-      printf("True\nSum of other variables: x_const = %lf\n", x_const);
-      if (mode == 'R') printf("Reduced minimization.\n");
-      else if (mode == 'C') printf("Constrained minimization.\n");
-   } else printf("False\n");
    printf("\n");
 
    return;
@@ -129,7 +124,7 @@ void PrintStats(char method, int nblocks, int iter, double exectime, double disc
     return;
 }
 
-void WriteSetup(char * outputfile, char * outputpath, int dimension, int nconstraints, int nblocks, char * Afilename, char * bfilename, char * x0filename, char * constrfilename, double tol, int maxiter, char mode, double x_const) {
+void WriteSetup(char * outputfile, char * outputpath, int dimension, int nconstraints, int nblocks, char * Afilename, char * bfilename, char * x0filename, char * constrfilename, double * constr, double tol, int maxiter) {
 
     FILE * fp_setup;
 
@@ -146,6 +141,7 @@ void WriteSetup(char * outputfile, char * outputpath, int dimension, int nconstr
    fprintf(fp_setup, "Input Parameters:\n");
    fprintf(fp_setup, "Dimension: N_var = %d\n", dimension);
    fprintf(fp_setup, "Number of constraints: N_constr = %d\n", nconstraints);
+   if (nconstraints - dimension == 1) fprintf(fp_setup, "Additional constraint: x_const = %.4lf\n", constr[nconstraints-1]);
    fprintf(fp_setup, "Number of blocks for BSHAKE: nblocks = %d\n", nblocks);
    fprintf(fp_setup, "A Matrix input file: '%s'\n", Afilename);
    fprintf(fp_setup, "B vector input file: '%s'\n", bfilename);
@@ -153,13 +149,6 @@ void WriteSetup(char * outputfile, char * outputpath, int dimension, int nconstr
    fprintf(fp_setup, "Values of constraints input file: '%s'\n", constrfilename);
    fprintf(fp_setup, "Tolerance: tol = %.4e\n", tol);
    fprintf(fp_setup, "Maximum number of allowed iterations: maxiter = %d\n", maxiter);
-   fprintf(fp_setup, "Constrained problem: ");
-   if (mode != 'U') {
-      fprintf(fp_setup, "True\nSum of other variables: x_const = %lf\n", x_const);
-      if (mode == 'R') fprintf(fp_setup, "Reduced minimization.\n");
-      else if (mode == 'C') fprintf(fp_setup, "Constrained minimization.\n");
-   } else fprintf(fp_setup, "False\n");
-   fprintf(fp_setup, "\n");
 
    fclose(fp_setup);
 
