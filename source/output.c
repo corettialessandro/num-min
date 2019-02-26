@@ -8,11 +8,12 @@
 
 #include "output.h"
 
-void PrintSetup(char * inputfile, int dimension, int nblocks, char * Afilename, char * bfilename, char * x0filename, char * constrfilename, double tol, int maxiter, char mode, double x_const) {
+void PrintSetup(char * inputfile, int dimension, int nconstraints, int nblocks, char * Afilename, char * bfilename, char * x0filename, char * constrfilename, double tol, int maxiter, char mode, double x_const) {
 
    printf("\nNumerical Minimization Test Program\n\n");
    printf("Input Parameters:\n");
-   printf("Dimension: N = %d\n", dimension);
+   printf("Dimension: N_var = %d\n", dimension);
+   printf("Number of constraints: N_constr = %d\n", nconstraints);
    printf("Number of blocks for BSHAKE: nblocks = %d\n", nblocks);
    printf("A Matrix input file: '%s'\n", Afilename);
    printf("B vector input file: '%s'\n", bfilename);
@@ -128,7 +129,7 @@ void PrintStats(char method, int nblocks, int iter, double exectime, double disc
     return;
 }
 
-void WriteSetup(char * outputfile, char * outputpath, int dimension, int nblocks, char * Afilename, char * bfilename, char * x0filename, char * constrfilename, double tol, int maxiter, char mode, double x_const) {
+void WriteSetup(char * outputfile, char * outputpath, int dimension, int nconstraints, int nblocks, char * Afilename, char * bfilename, char * x0filename, char * constrfilename, double tol, int maxiter, char mode, double x_const) {
 
     FILE * fp_setup;
 
@@ -143,7 +144,8 @@ void WriteSetup(char * outputfile, char * outputpath, int dimension, int nblocks
 
    fprintf(fp_setup, "\nNumerical Minimization Test Program\n\n");
    fprintf(fp_setup, "Input Parameters:\n");
-   fprintf(fp_setup, "Dimension: N = %d\n", dimension);
+   fprintf(fp_setup, "Dimension: N_var = %d\n", dimension);
+   fprintf(fp_setup, "Number of constraints: N_constr = %d\n", nconstraints);
    fprintf(fp_setup, "Number of blocks for BSHAKE: nblocks = %d\n", nblocks);
    fprintf(fp_setup, "A Matrix input file: '%s'\n", Afilename);
    fprintf(fp_setup, "B vector input file: '%s'\n", bfilename);

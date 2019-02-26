@@ -15,12 +15,12 @@
 #include "Vector.h"
 #include "aux_func.h"
 
-void PrintSetup(char * inputfile, int dimension, int nblocks, char * Afilename, char * bfilename, char * x0filename, char * constrfilename, double tol, int maxiter, char mode, double x_const);
+void PrintSetup(char * inputfile, int dimension, int nconstraints, int nblocks, char * Afilename, char * bfilename, char * x0filename, char * constrfilename, double tol, int maxiter, char mode, double x_const);
 void PrintMatrix(int rows, int columns, double ** matrix, char * label);
 void PrintVector(int dim, double * vector, char * label);
 void PrintStats(char method, int nblocks, int iter, double exectime, double discr, double tol);
 
-void WriteSetup(char * outputfile, char * outputpath, int dimension, int nblocks, char * Afilename, char * bfilename, char * x0filename, char * constrfilename, double tol, int maxiter, char mode, double x_const);
+void WriteSetup(char * outputfile, char * outputpath, int dimension, int nconstraints, int nblocks, char * Afilename, char * bfilename, char * x0filename, char * constrfilename, double tol, int maxiter, char mode, double x_const);
 void WriteMatrix(char * outputfile, char * outputpath, int rows, int columns, double ** matrix, char * label);
 void WriteVector(char * outputfile, char * outputpath, int dim, double * vector, char * label);
 void WriteQFProp(char * outputfile, char * outputpath, int dd, double r, double scn);
