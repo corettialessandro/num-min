@@ -107,6 +107,18 @@ double * VectorDifference(int N, double * u, double * v, double * result) {
     return result;
 }
 
+double * VectorScalarSum(int N, double * u, double l, double * result) {
+
+   int i;
+
+   for (i = 0; i < N; i++) {
+
+      result[i] = u[i] + l;
+   }
+
+   return result;
+}
+
 double MaxIterError(int N, double * an_sol, double * iter_sol) {
 
     double maxerr;
