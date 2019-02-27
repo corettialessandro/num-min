@@ -91,7 +91,7 @@ double Sigma(int k, int N_var, int N_constr, double ** A, double * b, double * x
    if (k < N_var) {
 
       sigma_k = -b[k] - constr[k];
-      (k < N_var/delta_N) ? (sigma_k -= add_gamma[0]) : (sigma_k -= add_gamma[1]);
+      if (N_constr > N_var) ((k < N_var/delta_N) ? (sigma_k -= add_gamma[0]) : (sigma_k -= add_gamma[1]));
       for (i = 0; i < N_var; i++) sigma_k += A[k][i] * x[i];
 
    } else {
