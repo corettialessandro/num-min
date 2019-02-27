@@ -14,6 +14,7 @@
 
 double * AllocateDVector(int dim);
 int * AllocateIVector(int dim);
+double * CAllocateDVector(int dim);
 double * ReadDVector(int dim, double * vector, char * filepath);
 void FreeDVector(int dim, double * vector);
 void FreeIVector(int dim, int * vector);
