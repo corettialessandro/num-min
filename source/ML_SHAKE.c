@@ -19,13 +19,13 @@ double * MasslessShake(int N_var, int N_constr, double ** A, double * b, double 
 
     denom = AllocateDVector(N_constr);
     sigold = AllocateDVector(N_constr);
-    add_gamma = AllocateDVector(N_constr - N_var);
+    add_gamma = CAllocateDVector(N_constr - N_var);
 
     for (i=0; i<N_var; i++) xold[i] = x0[i];
 
     for (k=0; k<N_constr; k++) {
 
-        denom[k] = Denom(k, N_var, A);
+        denom[k] = Denom(k, N_var, N_constr, A);
         sigold[k] = Sigma(k, N_var, N_constr, A, b, xold, constr, add_gamma);
     }
 
@@ -103,11 +103,12 @@ double Sigma(int k, int N_var, int N_constr, double ** A, double * b, double * x
    return sigma_k;
 }
 
-double Denom(int k, int N_var, double ** A) {
+double Denom(int k, int N_var, int N_constr, double ** A) {
 
    double denom_k;
 
    int i;
+   int delta_N = (N_constr - N_var);
 
    if (k < N_var) {
 
@@ -116,7 +117,7 @@ double Denom(int k, int N_var, double ** A) {
 
    } else {
 
-      denom_k = N_var;
+      denom_k = N_var/delta_N;
    }
 
    return denom_k;
